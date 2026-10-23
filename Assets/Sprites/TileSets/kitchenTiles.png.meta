@@ -1,0 +1,663 @@
+fileFormatVersion: 2
+guid: de56b92ead8224b17b9b33cc9fc71544
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6761421372334884623
+    second: kitchenTiles_0
+  - first:
+      213: 6111168867761043616
+    second: kitchenTiles_1
+  - first:
+      213: -4346292031552627448
+    second: kitchenTiles_2
+  - first:
+      213: 4727087646256457110
+    second: kitchenTiles_3
+  - first:
+      213: 6329941060286332581
+    second: kitchenTiles_4
+  - first:
+      213: -7190975860271790156
+    second: kitchenTiles_5
+  - first:
+      213: 8816754317959485504
+    second: kitchenTiles_6
+  - first:
+      213: 6489546032531202640
+    second: kitchenTiles_7
+  - first:
+      213: 2159548595168271063
+    second: kitchenTiles_8
+  - first:
+      213: 5988103430912920624
+    second: kitchenTiles_9
+  - first:
+      213: 5690732592946961224
+    second: kitchenTiles_10
+  - first:
+      213: 8545625595098369552
+    second: kitchenTiles_11
+  - first:
+      213: -4428304265978373384
+    second: kitchenTiles_12
+  - first:
+      213: -5206596580853211705
+    second: kitchenTiles_13
+  - first:
+      213: 1187650455351077200
+    second: kitchenTiles_14
+  - first:
+      213: -1763026109001679775
+    second: kitchenTiles_15
+  - first:
+      213: 7310104057439330662
+    second: kitchenTiles_16
+  - first:
+      213: -3929505219032316386
+    second: kitchenTiles_17
+  - first:
+      213: -4785791707256345696
+    second: kitchenTiles_18
+  - first:
+      213: 7685509585048647527
+    second: kitchenTiles_19
+  - first:
+      213: 5843413809776644136
+    second: kitchenTiles_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 64
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: kitchenTiles_0
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 1742
+        width: 194
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f8be3dd51b9a22a0800000000000000
+      internalID: -6761421372334884623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_1
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 1742
+        width: 194
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a8b255f4bb3fc450800000000000000
+      internalID: 6111168867761043616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_2
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 1742
+        width: 386
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80dd139cc6edea3c0800000000000000
+      internalID: -4346292031552627448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_3
+      rect:
+        serializedVersion: 2
+        x: 1025
+        y: 1742
+        width: 194
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 695e0494b2df99140800000000000000
+      internalID: 4727087646256457110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_4
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 1505
+        width: 194
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5aeb68b5bd778d750800000000000000
+      internalID: 6329941060286332581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_5
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 1268
+        width: 194
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b74714fd85843c90800000000000000
+      internalID: -7190975860271790156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_6
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 1187
+        width: 194
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 048ddd9c6576b5a70800000000000000
+      internalID: 8816754317959485504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_7
+      rect:
+        serializedVersion: 2
+        x: 602
+        y: 1187
+        width: 194
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0526196cbbf7f0a50800000000000000
+      internalID: 6489546032531202640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_8
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 1187
+        width: 194
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dad23a610248fd10800000000000000
+      internalID: 2159548595168271063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_9
+      rect:
+        serializedVersion: 2
+        x: 1064
+        y: 1187
+        width: 194
+        height: 275
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03cccd518540a1350800000000000000
+      internalID: 5988103430912920624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_10
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 743
+        width: 254
+        height: 443
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84b575a742b89fe40800000000000000
+      internalID: 5690732592946961224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_11
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 860
+        width: 194
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01e035bb339289670800000000000000
+      internalID: 8545625595098369552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_12
+      rect:
+        serializedVersion: 2
+        x: 602
+        y: 860
+        width: 194
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fa13057bb08b82c0800000000000000
+      internalID: -4428304265978373384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_13
+      rect:
+        serializedVersion: 2
+        x: 851
+        y: 872
+        width: 194
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cd1b75def37eb7b0800000000000000
+      internalID: -5206596580853211705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_14
+      rect:
+        serializedVersion: 2
+        x: 1082
+        y: 872
+        width: 206
+        height: 251
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0592884fbc16b7010800000000000000
+      internalID: 1187650455351077200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_15
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 551
+        width: 194
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16c373348197887e0800000000000000
+      internalID: -1763026109001679775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_16
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 551
+        width: 194
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66120ded8e4b27560800000000000000
+      internalID: 7310104057439330662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_17
+      rect:
+        serializedVersion: 2
+        x: 851
+        y: 563
+        width: 194
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e16098c92d79779c0800000000000000
+      internalID: -3929505219032316386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_18
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 147
+        width: 218
+        height: 340
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0aba9f76cc3759db0800000000000000
+      internalID: -4785791707256345696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_19
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 146
+        width: 194
+        height: 302
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7673fae7f3a68aa60800000000000000
+      internalID: 7685509585048647527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: kitchenTiles_20
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 146
+        width: 386
+        height: 302
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 820595776e9f71150800000000000000
+      internalID: 5843413809776644136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      kitchenTiles_0: -6761421372334884623
+      kitchenTiles_1: 6111168867761043616
+      kitchenTiles_10: 5690732592946961224
+      kitchenTiles_11: 8545625595098369552
+      kitchenTiles_12: -4428304265978373384
+      kitchenTiles_13: -5206596580853211705
+      kitchenTiles_14: 1187650455351077200
+      kitchenTiles_15: -1763026109001679775
+      kitchenTiles_16: 7310104057439330662
+      kitchenTiles_17: -3929505219032316386
+      kitchenTiles_18: -4785791707256345696
+      kitchenTiles_19: 7685509585048647527
+      kitchenTiles_2: -4346292031552627448
+      kitchenTiles_20: 5843413809776644136
+      kitchenTiles_3: 4727087646256457110
+      kitchenTiles_4: 6329941060286332581
+      kitchenTiles_5: -7190975860271790156
+      kitchenTiles_6: 8816754317959485504
+      kitchenTiles_7: 6489546032531202640
+      kitchenTiles_8: 2159548595168271063
+      kitchenTiles_9: 5988103430912920624
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
