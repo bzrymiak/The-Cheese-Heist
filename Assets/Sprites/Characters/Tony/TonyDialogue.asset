@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bef253740f42c4ab48dd690d3489007a, type: 3}
+  m_Name: TonyDialogue
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
+  npcName: Tony
+  npcPortrait: {fileID: 21300000, guid: b291ac945d95c4ce0909ebad07716615, type: 3}
+  dialogueLines:
+  - The Name's Tony, it's a pleasure to meet ya.
+  - I've heard some things about you... mostly that you're a nuisance to the community
+    and a sneaky thief, which is why I had my men hunt you down.
+  - Let's cut to the cheese. I'm offering you $1M for the biggest job ever... to
+    steal Chef Reggie's iconic secret cheese recipe.
+  - Ever since he opened up, all of my customers have abandoned me! I asked one of
+    my regulars why...
+  - He said the cheese is so good a guy proposed to his pasta last week!!!
+  autoStart: 1
+  autoStartDelay: 3
+  typingSpeed: 0.05
