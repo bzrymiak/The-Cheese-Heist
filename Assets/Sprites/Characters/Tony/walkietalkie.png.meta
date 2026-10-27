@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: b291ac945d95c4ce0909ebad07716615
+guid: 53300ddbcdd7842918cf802ec0b99956
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3618264323495479814
-    second: walkietalkie_0
+      213: 5751665342464049110
+    second: walkietalkie 1_0
   - first:
-      213: 8546714902215780082
-    second: walkietalkie_1
+      213: -3623498432593183819
+    second: walkietalkie 1_1
   - first:
-      213: -7659980150852730813
-    second: walkietalkie_2
+      213: -3541774614551336055
+    second: walkietalkie 1_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -106,13 +106,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: walkietalkie_0
+      name: walkietalkie 1_0
       rect:
         serializedVersion: 2
-        x: 2
+        x: 11
         y: 0
         width: 37
-        height: 64
+        height: 62
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,18 +121,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: af53596a4c759cdc0800000000000000
-      internalID: -3618264323495479814
+      spriteID: 6dfbe74c72502df40800000000000000
+      internalID: 5751665342464049110
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: walkietalkie_1
+      name: walkietalkie 1_1
       rect:
         serializedVersion: 2
-        x: 42
-        y: 46
+        x: 51
+        y: 44
         width: 10
         height: 10
       alignment: 0
@@ -143,18 +143,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2f6eb1fcbe70c9670800000000000000
-      internalID: 8546714902215780082
+      spriteID: 5bb3919af5fb6bdc0800000000000000
+      internalID: -3623498432593183819
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: walkietalkie_2
+      name: walkietalkie 1_2
       rect:
         serializedVersion: 2
-        x: 48
-        y: 39
+        x: 57
+        y: 37
         width: 10
         height: 6
       alignment: 0
@@ -165,8 +165,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 34041e913a842b590800000000000000
-      internalID: -7659980150852730813
+      spriteID: 98beb21d0c619dec0800000000000000
+      internalID: -3541774614551336055
       vertices: []
       indices: 
       edges: []

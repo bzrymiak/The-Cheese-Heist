@@ -29,12 +29,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (PauseController.IsGamePaused)
-        {
-            canMove = false;
-            return;
-        }
-        input = canMove ? ReadInput() : Vector2.zero;
+        bool allowed = canMove && !PauseController.IsGamePaused ;
+        
+        input = allowed ? ReadInput() : Vector2.zero;
 
         if (IsMoving)
         {
