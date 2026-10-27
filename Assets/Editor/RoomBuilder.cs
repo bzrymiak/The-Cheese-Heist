@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 // Tools > Cheese Heist > Build Rooms + Doors
-// makes the two dining room scenes from the figma layout and hooks up doors between them and the kitchen.
+// makes all the room scenes from the figma layout and hooks up the doors between them + the kitchen.
 // all the numbers below are pixel positions straight from the figma "map" frames (64px = 1 tile)
 public static class RoomBuilder
 {
@@ -47,29 +47,45 @@ public static class RoomBuilder
             BuildRoom(room);
 
         SetUpKitchenDoors();
-        AddToBuildSettings("Assets/Scenes/DiningRoom.unity", "Assets/Scenes/DiningRoom2.unity");
+        AddToBuildSettings("Assets/Scenes/Closet.unity", "Assets/Scenes/DiningRoom.unity", "Assets/Scenes/DiningRoom2.unity",
+            "Assets/Scenes/CameraRoom.unity", "Assets/Scenes/LaserVault.unity");
 
-        Debug.Log("rooms built. play from the Kitchen and walk through the right or bottom door");
+        Debug.Log("rooms built. start in the Closet scene and walk through");
     }
 
     static List<Room> Rooms()
     {
-        // dining room to the right of the kitchen
+        // closet, where tony drops you in through the window
+        var closet = new Room { name = "Closet", w = 327, h = 692 };
+        AddWalls(closet, 144);
+        closet.furniture.AddRange(new[] {
+            new Box(36,95,79,79), new Box(69,95,79,79),    // flour bags
+            new Box(174,586,64,88), new Box(243,152,64,88) // barrels
+        });
+        closet.doors.Add(new Door(new Box(285, 492, 26, 64), "DiningRoom", "from_closet"));
+        closet.spawns["start"] = new Vector2(80, 420);
+        closet.spawns["from_dining"] = new Vector2(245, 524);
+        closet.firstSpawn = "start";
+
+        // first dining room (closet is on its left)
         var d1 = new Room { name = "DiningRoom", w = 738, h = 526 };
-        AddWalls(d1);
+        AddWalls(d1, 150);
         d1.furniture.AddRange(new[] {
             new Box(475,332,127,132), new Box(148,397,67,64), new Box(535,205,67,64),
             new Box(605,318,68,83), new Box(218,381,68,83), new Box(605,189,68,83), new Box(77,381,68,83),
             new Box(464,189,68,83), new Box(404,318,68,83), new Box(605,381,68,83), new Box(404,381,68,83),
             new Box(660,88,47,111), new Box(24,82,47,111) // plants
         });
-        d1.doors.Add(new Door(new Box(16, 271, 40, 64), KitchenScene, "from_dining"));
-        d1.spawns["from_kitchen"] = new Vector2(95, 303);
-        d1.firstSpawn = "from_kitchen";
+        d1.doors.Add(new Door(new Box(16, 271, 40, 64), "Closet", "from_dining"));
+        // no opening drawn on this wall yet, door added so the path works
+        d1.doors.Add(new Door(new Box(682, 271, 40, 64), "DiningRoom2", "from_dining"));
+        d1.spawns["from_closet"] = new Vector2(95, 303);
+        d1.spawns["from_dining2"] = new Vector2(640, 303);
+        d1.firstSpawn = "from_closet";
 
-        // dining room below the kitchen (the one with the arch)
+        // second dining room, arch goes up into the kitchen
         var d2 = new Room { name = "DiningRoom2", w = 738, h = 526 };
-        AddWalls(d2);
+        AddWalls(d2, 150);
         d2.furniture.AddRange(new[] {
             new Box(148,332,127,132), new Box(535,397,67,64), new Box(148,205,67,64),
             new Box(77,318,68,83), new Box(464,381,68,83), new Box(77,189,68,83), new Box(605,381,68,83),
@@ -77,15 +93,39 @@ public static class RoomBuilder
             new Box(605,88,47,111), new Box(403,88,47,111) // plants
         });
         d2.doors.Add(new Door(new Box(463, 144, 128, 36), KitchenScene, "from_dining2"));
+        d2.doors.Add(new Door(new Box(16, 271, 40, 64), "DiningRoom", "from_dining2"));
         d2.spawns["from_kitchen"] = new Vector2(527, 225);
+        d2.spawns["from_dining"] = new Vector2(95, 303);
         d2.firstSpawn = "from_kitchen";
 
-        return new List<Room> { d1, d2 };
+        // basement with the cameras
+        var cam = new Room { name = "CameraRoom", w = 738, h = 526 };
+        AddWalls(cam, 150);
+        cam.furniture.AddRange(new[] {
+            new Box(144,71,64,137), new Box(462,327,64,137), new Box(272,200,64,137), // crate stacks
+            new Box(526,373,64,91), new Box(354,131,64,64), new Box(418,131,64,64),
+            new Box(29,407,90,103),                                                   // garbage chute
+            new Box(659,347,66,65), new Box(659,125,68,66)                            // cameras
+        });
+        cam.doors.Add(new Door(new Box(42, 478, 64, 32), KitchenScene, "from_camera"));
+        cam.doors.Add(new Door(new Box(536, 144, 128, 36), "LaserVault", "from_camera"));
+        cam.spawns["from_kitchen"] = new Vector2(74, 430);
+        cam.spawns["from_vault"] = new Vector2(600, 235);
+        cam.firstSpawn = "from_kitchen";
+
+        // vault with the lasers + safe
+        var vault = new Room { name = "LaserVault", w = 738, h = 526 };
+        AddWalls(vault, 140);
+        vault.doors.Add(new Door(new Box(523, 478, 128, 32), "CameraRoom", "from_vault"));
+        vault.spawns["from_camera"] = new Vector2(587, 430);
+        vault.firstSpawn = "from_camera";
+
+        return new List<Room> { closet, d1, d2, cam, vault };
     }
 
-    static void AddWalls(Room r)
+    static void AddWalls(Room r, float topWall)
     {
-        r.walls.Add(new Box(0, 0, r.w, 150));        // top wall (includes the wall face)
+        r.walls.Add(new Box(0, 0, r.w, topWall));    // top wall (includes the wall face)
         r.walls.Add(new Box(0, r.h - 16, r.w, 16));  // bottom
         r.walls.Add(new Box(0, 0, 16, r.h));         // left
         r.walls.Add(new Box(r.w - 16, 0, 16, r.h));  // right
@@ -230,19 +270,14 @@ public static class RoomBuilder
         float scale = b.size.x / float.Parse(KitchenW);
         Vector2 K(float x, float y) => new Vector2(b.min.x + x * scale, b.max.y - y * scale);
 
-        // the right door has to start on the floor, the border tile's wall sits right where the old trigger was
-        var ground = Object.FindObjectsByType<TilemapRenderer>(FindObjectsSortMode.None)
-            .FirstOrDefault(t => t.gameObject.name.ToLower().Contains("ground"));
-        float floorRight = ground != null ? ground.bounds.max.x : K(657, 0).x;
-        float doorTop = K(0, 272).y, doorBottom = K(0, 336).y;
-
         var doors = new GameObject("Doors");
-        MakeKitchenDoor(doors.transform, new Vector2(floorRight - 0.7f, doorTop), new Vector2(floorRight + 0.6f, doorBottom), "DiningRoom", "from_kitchen");
         MakeKitchenDoor(doors.transform, K(463, 478), K(592, 510), "DiningRoom2", "from_kitchen");
+        // the arched door top left, goes down to the basement (will need the key later)
+        MakeKitchenDoor(doors.transform, K(74, 144), K(146, 176), "CameraRoom", "from_kitchen");
 
         var spawns = new GameObject("Spawns");
-        AddSpawn(spawns.transform, "from_dining", new Vector2(floorRight - 1.5f, (doorTop + doorBottom) / 2f));
         AddSpawn(spawns.transform, "from_dining2", K(527, 440));
+        AddSpawn(spawns.transform, "from_camera", K(110, 215));
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
