@@ -47,7 +47,7 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
-        SceneLoader.Load(SceneLoader.Kitchen);
+        SceneLoader.Load(SceneLoader.Intro);
     }
 
     public void OpenInstructions()

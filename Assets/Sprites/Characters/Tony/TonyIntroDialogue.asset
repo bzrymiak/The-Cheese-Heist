@@ -38,7 +38,7 @@ MonoBehaviour:
     some starting points for you."
   - "Take a look at the file and when you\u2019re ready, I\u2019ll meet you outside! "
   endDialogueLines: 0000000000000000000000010000000001
-  autoStart: 0
+  autoStart: 1
   autoStartDelay: 1
   typingSpeed: 0.03
   choices:

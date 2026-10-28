@@ -20,5 +20,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DiningRoom2.unity
     guid: 66e7358a3293d4d8bbc079d6314cbf29
+  - enabled: 1
+    path: Assets/Scenes/TransitionScreen.unity
+    guid: bc9f3b27ebf0349f7b403449fb0efd22
+  - enabled: 1
+    path: Assets/Scenes/Closet.unity
+    guid: 68ce3c7d8b23545f7a140a052fc56ffb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

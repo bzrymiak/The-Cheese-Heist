@@ -8,4 +8,11 @@ public class PauseController : MonoBehaviour
     {
         IsGamePaused = pause;
     }
+
+    // make sure game is always unpaused on start
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetOnPlay()
+    {
+        IsGamePaused = false;
+    }
 }
