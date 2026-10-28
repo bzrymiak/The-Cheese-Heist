@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bef253740f42c4ab48dd690d3489007a, type: 3}
+  m_Name: GusEntryDialogue
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
+  npcName: Gus
+  npcPortrait: {fileID: 21300000, guid: 23544eabaaeda47f7829ce3ad3b6635c, type: 3}
+  dialogueLines:
+  - AH! REGGIE I CAN EXPLAIN PLEASE DON'T FIRE ME! I WAS SO HUNGRY AND THE CHEESE
+    SMELLED SO GOOD I COULDN'T RESIST...
+  - Wait who the hell are you?!
+  - AH!
+  - A misunderstanding....?
+  - ...alright. We'll call it even. I can't risk another strike with Reggie, we're
+    already on bad terms.
+  - I'm stepping out for a few minutes. You better be gone before I get back or I'll
+    call the cops.
+  - ...alright. We'll call it even. I can't risk another strike with Reggie, we're
+    already on bad terms.
+  - I'm stepping out for a few minutes. Raid the fridge in that time and get lost
+    or I'll call the cops.
+  endDialogueLines: 0000010000010001
+  autoStart: 1
+  autoStartDelay: 0.5
+  typingSpeed: 0.02
+  choices:
+  - dialogueIndex: 1
+    choices:
+    - 'No time to chat. [Fight Gus]'
+    - It's a misunderstanding...
+    nextDialogueIndexes: 0200000003000000
+  - dialogueIndex: 3
+    choices:
+    - Say... does Reggie know you're here?
+    - I'm just so hungry...  for cheese...
+    nextDialogueIndexes: 0400000006000000
