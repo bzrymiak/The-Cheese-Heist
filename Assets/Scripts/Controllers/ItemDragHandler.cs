@@ -28,6 +28,14 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         canvasGroup.alpha = 1f;
 
         Slot dropSlot = eventData.pointerEnter?.GetComponent<Slot>();
+        if (dropSlot == null)
+        {
+            GameObject item = eventData.pointerEnter;
+            if (item != null)
+            {
+                dropSlot = item.GetComponentInParent<Slot>();
+            }
+        }
         Slot originalSlot = originalParent.GetComponent<Slot>();
 
         if (dropSlot != null)
