@@ -19,7 +19,17 @@ public class NPCDialogue : ScriptableObject
 
 public class DialogueChoice
 {
-   public int dialogueIndex; // where choices appear
-   public string[] choices; // player choices
-   public int[] nextDialogueIndexes; // line after player decision
+   public int dialogueIndex;  // where choices appear
+   public string[] choices;   // player choices
+   public int[] nextDialogueIndexes;   // line after player decision
+   public ChoiceAction[] actions;   // function calls
+}
+
+public enum ChoiceActionType { None, LoadScene, SetFlag }
+[System.Serializable]
+
+public class ChoiceAction
+{
+   public ChoiceActionType type;
+   public string parameter;   // scene name, flag name, etc.
 }

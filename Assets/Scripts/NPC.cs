@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
 using System;
+using UnityEngine.SceneManagement;
 
 public class NPC : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class NPC : MonoBehaviour
     public bool autoStart;
     public float autoStartDelay;
     private bool hasSpoken;
+    public ChoiceAction[] actions; // function calls
 
 
     void Start()
@@ -136,15 +138,44 @@ public class NPC : MonoBehaviour
         for (int i = 0; i < choice.choices.Length; i++)
         {
             int nextIndex = choice.nextDialogueIndexes[i];
-            dialogueUI.CreateChoiceButton(choice.choices[i], () => ChooseOption(nextIndex));
+            ChoiceAction action = (choice.actions != null && i < choice.actions.Length) 
+                ? choice.actions[i]
+                : null;
+
+            dialogueUI.CreateChoiceButton(choice.choices[i], () => ChooseOption(nextIndex, action));
         }
     }
 
-    void ChooseOption(int nextIndex)
+    void ChooseOption(int nextIndex, ChoiceAction action)
     {
         dialogueIndex = nextIndex;
+
+         if (action != null && action.type != ChoiceActionType.None)
+        {
+            RunAction(action);
+
+            // end dialogue
+            if (action.type == ChoiceActionType.LoadScene) return;
+        }
+        
         dialogueUI.ClearChoices();
         DisplayCurrentLine();
+    }
+
+    void RunAction(ChoiceAction action)
+    {
+        switch (action.type)
+        {
+            case ChoiceActionType.LoadScene:
+                EndDialogue();   
+                SceneManager.LoadScene(action.parameter);
+                break;
+
+            case ChoiceActionType.SetFlag:
+                // e.g. GameState.SetFlag(action.parameter, true);
+                // where we can make note of interactions that shift narrative
+                break;
+        }
     }
 
     void DisplayCurrentLine()

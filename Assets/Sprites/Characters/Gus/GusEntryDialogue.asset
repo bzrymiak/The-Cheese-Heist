@@ -38,8 +38,18 @@ MonoBehaviour:
     - 'No time to chat. [Fight Gus]'
     - It's a misunderstanding...
     nextDialogueIndexes: 0200000003000000
+    actions:
+    - type: 1
+      parameter: Intro
+    - type: 0
+      parameter: 
   - dialogueIndex: 3
     choices:
     - Say... does Reggie know you're here?
     - I'm just so hungry...  for cheese...
     nextDialogueIndexes: 0400000006000000
+    actions:
+    - type: 0
+      parameter: 
+    - type: 0
+      parameter: 
