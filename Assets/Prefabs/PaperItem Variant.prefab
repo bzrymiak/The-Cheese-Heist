@@ -12,6 +12,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: PaperItem Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6487531381522562136, guid: 0074309589de7491db582f8e86b35ddf, type: 3}
+      propertyPath: title
+      value: Reggie's Interview
+      objectReference: {fileID: 0}
+    - target: {fileID: 6487531381522562136, guid: 0074309589de7491db582f8e86b35ddf, type: 3}
+      propertyPath: description
+      value: An article Tony gave you about Reggie's best friend.
+      objectReference: {fileID: 0}
+    - target: {fileID: 6487531381522562136, guid: 0074309589de7491db582f8e86b35ddf, type: 3}
+      propertyPath: detailedView
+      value: 
+      objectReference: {fileID: 29368451943864613, guid: 0b56c12463ca8451abdc02860b55da22, type: 3}
     - target: {fileID: 7502004941464870621, guid: 0074309589de7491db582f8e86b35ddf, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

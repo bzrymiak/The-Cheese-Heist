@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
     Transform originalParent;
     CanvasGroup canvasGroup;
@@ -64,4 +64,8 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        GetComponentInParent<Slot>()?.OnPointerClick(eventData);
+    }
 }

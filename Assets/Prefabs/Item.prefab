@@ -117,6 +117,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ID: 0
+  title: Item
+  description: Desc
+  detailedView: {fileID: -1769674637, guid: 7dc5ec0ed046e47438dc18973d3ea281, type: 3}
 --- !u!212 &-8939262156696088727
 SpriteRenderer:
   serializedVersion: 3
