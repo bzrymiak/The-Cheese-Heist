@@ -47,8 +47,9 @@ public static class RoomBuilder
             BuildRoom(room);
 
         SetUpKitchenDoors();
+        SetUpIntroDoor();
         AddToBuildSettings("Assets/Scenes/Closet.unity", "Assets/Scenes/DiningRoom.unity", "Assets/Scenes/DiningRoom2.unity",
-            "Assets/Scenes/CameraRoom.unity", "Assets/Scenes/LaserVault.unity");
+            "Assets/Scenes/CameraRoom.unity", "Assets/Scenes/LaserVault.unity", "Assets/Scenes/Storage.unity");
 
         Debug.Log("rooms built. start in the Closet scene and walk through");
     }
@@ -120,8 +121,23 @@ public static class RoomBuilder
         vault.spawns["from_camera"] = new Vector2(587, 430);
         vault.firstSpawn = "from_camera";
 
+        // storage room off the right side of the kitchen. in figma it's a flipped copy of the closet
+        // so the door is on the left wall, numbers below are already mirrored
+        var storage = new Room { name = "Storage", w = 327, h = 692 };
+        AddWalls(storage, 144);
+        storage.furniture.AddRange(new[] {
+            new Box(18,142,57,80),   // barrel top left
+            new Box(242,153,57,80),  // crate top right
+            new Box(11,331,57,80),   // crate on the left
+            new Box(235,507,64,138), // crate stack bottom right
+            new Box(87,571,57,74)    // barrel at the bottom
+        });
+        storage.doors.Add(new Door(new Box(16, 492, 26, 64), KitchenScene, "from_storage"));
+        storage.spawns["from_kitchen"] = new Vector2(80, 524);
+        storage.firstSpawn = "from_kitchen";
+
         // closet is left out on purpose, brooke built it by hand with tilemaps so we don't want to overwrite it
-        return new List<Room> { d1, d2, cam, vault };
+        return new List<Room> { d1, d2, cam, vault, storage };
     }
 
     static void AddWalls(Room r, float topWall)
@@ -276,12 +292,46 @@ public static class RoomBuilder
         // the arched door top left, goes down to the basement (will need the key later)
         MakeKitchenDoor(doors.transform, K(74, 144), K(146, 176), "CameraRoom", "from_kitchen");
 
+        // right side door into the storage room. the border tilemap has a solid wall all the way down
+        // that side, so the trigger goes on the last floor column instead of on the wall
+        DoorOnCells(doors.transform, border.GetComponent<Tilemap>(), 3, -3, 3, -2, "Storage", "from_kitchen");
+
         var spawns = new GameObject("Spawns");
+        AddSpawn(spawns.transform, "from_storage", border.GetComponent<Tilemap>().CellToWorld(new Vector3Int(2, -3, 0)) + new Vector3(0.5f, 1f));
         AddSpawn(spawns.transform, "from_dining2", K(527, 440));
         AddSpawn(spawns.transform, "from_camera", K(110, 215));
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
+    }
+
+    // tony's office has an opening on the right wall, walking out of it takes you to the closet
+    // only adds a Doors object, doesn't touch anything brooke put in the scene
+    static void SetUpIntroDoor()
+    {
+        var scene = EditorSceneManager.OpenScene("Assets/Scenes/Intro.unity");
+        var old = GameObject.Find("Doors");
+        if (old != null) Object.DestroyImmediate(old);
+
+        var border = Object.FindObjectsByType<TilemapRenderer>(FindObjectsSortMode.None)
+            .FirstOrDefault(t => t.gameObject.name.ToLower().Contains("border"));
+        if (border == null) { Debug.LogError("couldn't find the Border tilemap in Intro"); return; }
+
+        // same deal as the kitchen, the wall tiles are solid on the right so the door sits on the
+        // floor in the little side room (column 4, the light tiles)
+        var doors = new GameObject("Doors");
+        DoorOnCells(doors.transform, border.GetComponent<Tilemap>(), 4, -3, 4, -1, "Closet", "start");
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    // door covering a block of tile cells (inclusive), lines up exactly with the tilemap
+    static void DoorOnCells(Transform parent, Tilemap map, int x0, int y0, int x1, int y1, string scene, string spawn)
+    {
+        Vector2 min = map.CellToWorld(new Vector3Int(x0, y0, 0));
+        Vector2 max = map.CellToWorld(new Vector3Int(x1 + 1, y1 + 1, 0));
+        MakeKitchenDoor(parent, new Vector2(min.x, max.y), new Vector2(max.x, min.y), scene, spawn);
     }
 
     static void MakeKitchenDoor(Transform parent, Vector2 topLeft, Vector2 bottomRight, string scene, string spawn)

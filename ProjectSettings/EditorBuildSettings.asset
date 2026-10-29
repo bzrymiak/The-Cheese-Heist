@@ -35,5 +35,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GusFight.unity
     guid: 160227c2023fe4fc59ce3d8c5421c310
+  - enabled: 1
+    path: Assets/Scenes/Storage.unity
+    guid: 909ba725a7c024c1dbaa6bacf62d5752
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
