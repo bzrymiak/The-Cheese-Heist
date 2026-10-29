@@ -3336,7 +3336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed6b1dd5a13ad44bdb9bc144ba32f6c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomDoor
-  targetScene: DiningRoom
+  targetScene: Kitchen
   targetSpawn: from_closet
 --- !u!61 &1261181445
 BoxCollider2D:
@@ -5788,7 +5788,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51f7d6a51926740ddaf77ee2416b9485, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnPoint
-  id: from_dining
+  id: from_kitchen
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

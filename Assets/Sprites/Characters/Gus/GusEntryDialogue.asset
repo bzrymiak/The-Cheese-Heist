@@ -40,7 +40,7 @@ MonoBehaviour:
     nextDialogueIndexes: 0200000003000000
     actions:
     - type: 1
-      parameter: Intro
+      parameter: GusFight
     - type: 0
       parameter: 
   - dialogueIndex: 3
