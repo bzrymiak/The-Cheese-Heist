@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 4292161864207414557}
   - component: {fileID: 2336423509568544809}
   - component: {fileID: 2957294701563221181}
+  - component: {fileID: 385603669060010428}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -231,3 +232,19 @@ MonoBehaviour:
   bobHeight: 0.06
   bobSpeed: 14
   squash: 0.05
+--- !u!114 &385603669060010428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6151579945801064010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e289c411066d445f889f1730df60821, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  pickupRadius: 1.25
+  itemLayer:
+    serializedVersion: 2
+    m_Bits: 0

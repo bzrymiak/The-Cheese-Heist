@@ -5,8 +5,9 @@ public static class SceneLoader
 {
     public const string Menu = "Menu";
     public const string Intro = "Intro";
+    public const string Cutscene = "TransitionScreen";
+    public const string Closet = "Closet";
     public const string Kitchen = "Kitchen";
-
     public static void Load(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
