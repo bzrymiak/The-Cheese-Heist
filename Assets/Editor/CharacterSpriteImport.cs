@@ -2,14 +2,15 @@
 using UnityEditor;
 using UnityEngine;
 
-// anything dropped in Sprites/Characters or Sprites/Rooms gets pixel art settings automatically
+// anything dropped in Sprites/Characters, Rooms or Minigame gets pixel art settings automatically
 public class CharacterSpriteImport : AssetPostprocessor
 {
     void OnPreprocessTexture()
     {
         bool isCharacter = assetPath.StartsWith("Assets/Sprites/Characters/");
         bool isRoom = assetPath.StartsWith("Assets/Sprites/Rooms/");
-        if (!isCharacter && !isRoom) return;
+        bool isMinigame = assetPath.StartsWith("Assets/Sprites/Minigame/");
+        if (!isCharacter && !isRoom && !isMinigame) return;
 
         var imp = (TextureImporter)assetImporter;
         imp.textureType = TextureImporterType.Sprite;
