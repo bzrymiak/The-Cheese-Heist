@@ -20,5 +20,17 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DiningRoom2.unity
     guid: 66e7358a3293d4d8bbc079d6314cbf29
+  - enabled: 1
+    path: Assets/Scenes/Closet.unity
+    guid: 68ce3c7d8b23545f7a140a052fc56ffb
+  - enabled: 1
+    path: Assets/Scenes/CameraRoom.unity
+    guid: 9a62c032cb6644bc1b5883eca14cf8fb
+  - enabled: 1
+    path: Assets/Scenes/LaserVault.unity
+    guid: 0c416bf62984042e1b22628773890e28
+  - enabled: 1
+    path: Assets/Scenes/GusFight.unity
+    guid: 160227c2023fe4fc59ce3d8c5421c310
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

@@ -120,7 +120,8 @@ public static class RoomBuilder
         vault.spawns["from_camera"] = new Vector2(587, 430);
         vault.firstSpawn = "from_camera";
 
-        return new List<Room> { closet, d1, d2, cam, vault };
+        // closet is left out on purpose, brooke built it by hand with tilemaps so we don't want to overwrite it
+        return new List<Room> { d1, d2, cam, vault };
     }
 
     static void AddWalls(Room r, float topWall)
