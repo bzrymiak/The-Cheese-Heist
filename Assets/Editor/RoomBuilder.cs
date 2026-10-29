@@ -48,6 +48,7 @@ public static class RoomBuilder
 
         SetUpKitchenDoors();
         SetUpIntroDoor();
+        SetUpClosetDoor();
         AddToBuildSettings("Assets/Scenes/Closet.unity", "Assets/Scenes/DiningRoom.unity", "Assets/Scenes/DiningRoom2.unity",
             "Assets/Scenes/CameraRoom.unity", "Assets/Scenes/LaserVault.unity", "Assets/Scenes/Storage.unity");
 
@@ -77,12 +78,12 @@ public static class RoomBuilder
             new Box(464,189,68,83), new Box(404,318,68,83), new Box(605,381,68,83), new Box(404,381,68,83),
             new Box(660,88,47,111), new Box(24,82,47,111) // plants
         });
-        d1.doors.Add(new Door(new Box(16, 271, 40, 64), "Closet", "from_dining"));
+        d1.doors.Add(new Door(new Box(16, 271, 40, 64), "Storage", "from_dining"));
         // no opening drawn on this wall yet, door added so the path works
         d1.doors.Add(new Door(new Box(682, 271, 40, 64), "DiningRoom2", "from_dining"));
-        d1.spawns["from_closet"] = new Vector2(95, 303);
+        d1.spawns["from_storage"] = new Vector2(95, 303);
         d1.spawns["from_dining2"] = new Vector2(640, 303);
-        d1.firstSpawn = "from_closet";
+        d1.firstSpawn = "from_storage";
 
         // second dining room, arch goes up into the kitchen
         var d2 = new Room { name = "DiningRoom2", w = 738, h = 526 };
@@ -105,12 +106,12 @@ public static class RoomBuilder
         cam.furniture.AddRange(new[] {
             new Box(144,71,64,137), new Box(462,327,64,137), new Box(272,200,64,137), // crate stacks
             new Box(526,373,64,91), new Box(354,131,64,64), new Box(418,131,64,64),
-            new Box(29,407,90,103),                                                   // garbage chute
             new Box(659,347,66,65), new Box(659,125,68,66)                            // cameras
         });
-        cam.doors.Add(new Door(new Box(42, 478, 64, 32), KitchenScene, "from_camera"));
+        // the garbage chute in the corner is the way back up, so it's the door (not a solid object)
+        cam.doors.Add(new Door(new Box(29, 440, 90, 70), KitchenScene, "from_camera"));
         cam.doors.Add(new Door(new Box(536, 144, 128, 36), "LaserVault", "from_camera"));
-        cam.spawns["from_kitchen"] = new Vector2(74, 430);
+        cam.spawns["from_kitchen"] = new Vector2(175, 455);
         cam.spawns["from_vault"] = new Vector2(600, 235);
         cam.firstSpawn = "from_kitchen";
 
@@ -121,20 +122,17 @@ public static class RoomBuilder
         vault.spawns["from_camera"] = new Vector2(587, 430);
         vault.firstSpawn = "from_camera";
 
-        // storage room off the right side of the kitchen. in figma it's a flipped copy of the closet
-        // so the door is on the left wall, numbers below are already mirrored
+        // storage room on the left of the first dining room. same layout as the closet art,
+        // door on the right wall goes into the dining room
         var storage = new Room { name = "Storage", w = 327, h = 692 };
         AddWalls(storage, 144);
         storage.furniture.AddRange(new[] {
-            new Box(18,142,57,80),   // barrel top left
-            new Box(242,153,57,80),  // crate top right
-            new Box(11,331,57,80),   // crate on the left
-            new Box(235,507,64,138), // crate stack bottom right
-            new Box(87,571,57,74)    // barrel at the bottom
+            new Box(36,95,79,79), new Box(69,95,79,79),    // flour bags
+            new Box(174,586,64,88), new Box(243,152,64,88) // barrels
         });
-        storage.doors.Add(new Door(new Box(16, 492, 26, 64), KitchenScene, "from_storage"));
-        storage.spawns["from_kitchen"] = new Vector2(80, 524);
-        storage.firstSpawn = "from_kitchen";
+        storage.doors.Add(new Door(new Box(285, 492, 26, 64), "DiningRoom", "from_storage"));
+        storage.spawns["from_dining"] = new Vector2(245, 524);
+        storage.firstSpawn = "from_dining";
 
         // closet is left out on purpose, brooke built it by hand with tilemaps so we don't want to overwrite it
         return new List<Room> { d1, d2, cam, vault, storage };
@@ -292,12 +290,12 @@ public static class RoomBuilder
         // the arched door top left, goes down to the basement (will need the key later)
         MakeKitchenDoor(doors.transform, K(74, 144), K(146, 176), "CameraRoom", "from_kitchen");
 
-        // right side door into the storage room. the border tilemap has a solid wall all the way down
+        // right side door into the closet (brooke's scene). the border tilemap has a solid wall all the way down
         // that side, so the trigger goes on the last floor column instead of on the wall
-        DoorOnCells(doors.transform, border.GetComponent<Tilemap>(), 3, -3, 3, -2, "Storage", "from_kitchen");
+        DoorOnCells(doors.transform, border.GetComponent<Tilemap>(), 3, -3, 3, -2, "Closet", "from_kitchen");
 
         var spawns = new GameObject("Spawns");
-        AddSpawn(spawns.transform, "from_storage", border.GetComponent<Tilemap>().CellToWorld(new Vector3Int(2, -3, 0)) + new Vector3(0.5f, 1f));
+        AddSpawn(spawns.transform, "from_closet", border.GetComponent<Tilemap>().CellToWorld(new Vector3Int(2, -3, 0)) + new Vector3(0.5f, 1f));
         AddSpawn(spawns.transform, "from_dining2", K(527, 440));
         AddSpawn(spawns.transform, "from_camera", K(110, 215));
 
@@ -305,7 +303,8 @@ public static class RoomBuilder
         EditorSceneManager.SaveScene(scene);
     }
 
-    // tony's office has an opening on the right wall, walking out of it takes you to the closet
+    // tony's office has an opening on the right wall, walking out of it plays the cutscene
+    // (TransitionScreen), which then drops you in the closet
     // only adds a Doors object, doesn't touch anything brooke put in the scene
     static void SetUpIntroDoor()
     {
@@ -320,7 +319,28 @@ public static class RoomBuilder
         // same deal as the kitchen, the wall tiles are solid on the right so the door sits on the
         // floor in the little side room (column 4, the light tiles)
         var doors = new GameObject("Doors");
-        DoorOnCells(doors.transform, border.GetComponent<Tilemap>(), 4, -3, 4, -1, "Closet", "start");
+        DoorOnCells(doors.transform, border.GetComponent<Tilemap>(), 4, -3, 4, -1, "TransitionScreen", "");
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    // brooke's closet: point its door at the kitchen and rename the spawn by the door so the
+    // kitchen can send you back to it. doesn't touch anything else in the scene
+    static void SetUpClosetDoor()
+    {
+        var scene = EditorSceneManager.OpenScene("Assets/Scenes/Closet.unity");
+
+        foreach (var door in Object.FindObjectsByType<RoomDoor>(FindObjectsSortMode.None))
+        {
+            door.targetScene = KitchenScene;
+            door.targetSpawn = "from_closet";
+            EditorUtility.SetDirty(door);
+        }
+        foreach (var sp in Object.FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None))
+        {
+            if (sp.id == "from_dining") { sp.id = "from_kitchen"; EditorUtility.SetDirty(sp); }
+        }
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);

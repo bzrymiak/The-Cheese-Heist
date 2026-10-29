@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.InputSystem;
 using System;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class NPC : MonoBehaviour
 {
@@ -19,6 +20,19 @@ public class NPC : MonoBehaviour
     public bool autoStart;
     public float autoStartDelay;
     private bool hasSpoken;
+
+    // conversations already finished this run. static so it survives leaving and coming
+    // back into a room (the npc object itself gets rebuilt every time the scene loads)
+    static readonly HashSet<string> finished = new HashSet<string>();
+    // going back to the main menu counts as a fresh game, so forget everything
+    [RuntimeInitializeOnLoadMethod]
+    static void HookMenuReset()
+    {
+        finished.Clear();
+        SceneManager.sceneLoaded += (scene, mode) => { if (scene.name == "Menu") finished.Clear(); };
+    }
+
+    string Key => SceneManager.GetActiveScene().name + "/" + (dialogueData != null ? dialogueData.name : name);
     public ChoiceAction[] actions; // function calls
 
 
@@ -29,7 +43,9 @@ public class NPC : MonoBehaviour
         autoStart = dialogueData.autoStart;
         autoStartDelay = dialogueData.autoStartDelay;
 
-        if (autoStart)
+        if (finished.Contains(Key)) hasSpoken = true;
+
+        if (autoStart && !hasSpoken)
         {
             StartCoroutine(AutoStartRoutine());
         }
@@ -189,6 +205,7 @@ public class NPC : MonoBehaviour
         StopAllCoroutines();
         isDialogueActive = false;
         hasSpoken = true;
+        finished.Add(Key);
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
         PauseController.SetPause(false);
