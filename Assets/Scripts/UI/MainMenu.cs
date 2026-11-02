@@ -25,8 +25,8 @@ public class MainMenu : MonoBehaviour
     private readonly string[] bodies =
     {
         "Chef Tony wants Chef Reggie's secret cheese recipe. It's locked in a safe in Reggie's basement. Get in, get the recipe, get out.",
-        "Use WASD or the arrow keys to move around the restaurant.",
-        "Press F near something to interact with it. Clues and items go into your journal automatically, and you can check it any time.",
+        "Use WASD or the arrow keys to move around the restaurant. Press Enter to move through dialogue.",
+        "Press E near something to interact with it. Clues and items go into your journal automatically, and you can check it any time.",
         "Cameras are watching the basement. Duck behind furniture so they don't spot you. Getting caught sends you back to your last checkpoint.",
         "Some parts are on a timer. If it runs out, you're caught. Find the safe password before then."
     };

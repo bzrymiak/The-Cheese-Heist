@@ -15,9 +15,9 @@ MonoBehaviour:
   npcName: Gus
   npcPortrait: {fileID: 21300000, guid: 23544eabaaeda47f7829ce3ad3b6635c, type: 3}
   dialogueLines:
-  - AH! REGGIE I CAN EXPLAIN PLEASE DON'T FIRE ME! I WAS SO HUNGRY AND THE CHEESE
-    SMELLED SO GOOD I COULDN'T RESIST...
-  - Wait who the hell are you?!
+  - AH! REGGIE I CAN EXPLAIN PLEASE DON'T FIRE ME! I WAS SO HUNGRY ALL SHIFT AND
+    THE CHEESE SMELLED SO GOOD I COULDN'T RESIST...
+  - Wait you're not my boss! Who the hell are you?!
   - AH!
   - A misunderstanding....?
   - ...alright. We'll call it even. I can't risk another strike with Reggie, we're
