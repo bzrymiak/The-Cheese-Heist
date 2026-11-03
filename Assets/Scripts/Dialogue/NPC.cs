@@ -56,6 +56,7 @@ public class NPC : MonoBehaviour
         var kb = Keyboard.current;
         if (kb == null) return;
         if (PauseController.IsGamePaused && !isDialogueActive) return;
+        if (dialogueData.skip) EndDialogue(); // debug skip
 
         if (kb.enterKey.wasPressedThisFrame)
         {

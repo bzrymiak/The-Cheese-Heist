@@ -11,6 +11,8 @@ public class NPCDialogue : ScriptableObject
     public bool autoStart = false;
     public float autoStartDelay = 3f;
    public float typingSpeed = 0.05f;
+
+   public bool skip = false;
    
    public DialogueChoice[] choices;
 }

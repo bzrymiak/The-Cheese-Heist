@@ -5,6 +5,20 @@ public class MenuController : MonoBehaviour
 {
     public GameObject menuCanvas;
 
+    public static MenuController Instance;
+
+    void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(transform.root.gameObject); 
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(transform.root.gameObject); 
+    }
+
     void Start()
     {
         menuCanvas.SetActive(false);

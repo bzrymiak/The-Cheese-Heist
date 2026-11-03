@@ -25,6 +25,20 @@ public class InventoryController : MonoBehaviour
     private Slot selectedSlot;
     private Sprite currentCloseUp;
     
+      public static InventoryController Instance;
+
+    void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(transform.root.gameObject); 
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(transform.root.gameObject); 
+    }
+
     void Start()
     {
         itemDictionary = FindAnyObjectByType<ItemDictionary>();

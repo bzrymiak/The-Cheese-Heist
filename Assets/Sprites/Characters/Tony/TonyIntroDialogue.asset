@@ -41,6 +41,7 @@ MonoBehaviour:
   autoStart: 1
   autoStartDelay: 1
   typingSpeed: 0.03
+  skip: 0
   choices:
   - dialogueIndex: 6
     choices:
