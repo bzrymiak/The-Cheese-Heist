@@ -19,6 +19,9 @@ public class RhythmFight : MonoBehaviour
         public RectTransform rect;
         public bool judged;
         public bool telegraphed;
+        public float hold;      // > 0 means a long arrow you keep held down
+        public bool holding;
+        public RectTransform tail;
     }
 
     enum Grade { Perfect, Half, Miss }
@@ -72,6 +75,7 @@ public class RhythmFight : MonoBehaviour
     bool running, finished;
     int hits, perfects;
     float judgeTimer;
+    bool finisher;
     float playerHp = 1f, gusHp = 1f;
     float punchDamage;
     Color innerColor;
@@ -123,6 +127,9 @@ public class RhythmFight : MonoBehaviour
             // starts slow, speeds up as it goes
             t += Mathf.Lerp(gap * 1.35f, gap * 0.8f, i / (float)noteCount);
         }
+
+        // big wind up punch to finish (the long arrow, hold it until the tail runs out)
+        notes.Add(new Note { dir = Dir.Up, time = t + 0.3f, hold = 1f });
     }
 
     void Update()
@@ -143,6 +150,7 @@ public class RhythmFight : MonoBehaviour
         Telegraph(songTime);
         UpdateGuide();
         if (songTime >= 0) ReadInput(songTime);
+        UpdateHolds(songTime);
         CheckMissed(songTime);
 
         if (judgeTimer > 0)
@@ -165,14 +173,21 @@ public class RhythmFight : MonoBehaviour
         foreach (var n in notes)
         {
             if (n.judged) continue;
-            float x = hitX + (n.time - songTime) * scrollSpeed;
+            float x = n.holding ? hitX : hitX + (n.time - songTime) * scrollSpeed;
 
             if (n.rect == null)
             {
                 if (x > rightEdge) continue;
                 n.rect = MakeArrow(n.dir);
+                if (n.hold > 0) n.tail = MakeTail(n.rect);
             }
             n.rect.anchoredPosition = new Vector2(x, hitCircle.anchoredPosition.y);
+
+            if (n.tail != null)
+            {
+                float len = n.holding ? (n.time + n.hold - songTime) * scrollSpeed : n.hold * scrollSpeed;
+                n.tail.sizeDelta = new Vector2(Mathf.Max(0, len), arrowSize * 0.38f);
+            }
         }
     }
 
@@ -220,7 +235,7 @@ public class RhythmFight : MonoBehaviour
         Note target = null;
         foreach (var n in notes)
         {
-            if (n.judged) continue;
+            if (n.judged || n.holding) continue;
             if (target == null || Mathf.Abs(n.time - songTime) < Mathf.Abs(target.time - songTime)) target = n;
         }
         if (target == null) return;
@@ -230,15 +245,38 @@ public class RhythmFight : MonoBehaviour
 
         if (target.dir != dir) { Resolve(target, Grade.Miss, "WRONG WAY!"); return; }
 
+        if (target.hold > 0 && Mathf.Abs(diff) <= okWindow)
+        {
+            // start of the finisher, now you have to keep holding
+            target.holding = true;
+            ShowJudge("HOLD IT!", Color.white);
+            judgeTimer = 999f;
+            Play(ref robberAnim, robber, WindUp());
+            return;
+        }
+
         if (Mathf.Abs(diff) <= perfectWindow) Resolve(target, Grade.Perfect, null);
         else if (Mathf.Abs(diff) <= okWindow) Resolve(target, Grade.Half, diff > 0 ? "TOO EARLY!" : "TOO SLOW!");
         else Resolve(target, Grade.Miss, diff > 0 ? "TOO EARLY!" : "TOO SLOW!");
     }
 
+    void UpdateHolds(float songTime)
+    {
+        foreach (var n in notes)
+        {
+            if (!n.holding || n.judged) continue;
+            var kb = Keyboard.current;
+            bool down = kb != null && (kb.upArrowKey.isPressed || kb.wKey.isPressed);
+
+            if (songTime >= n.time + n.hold) { n.holding = false; finisher = true; Resolve(n, Grade.Perfect, null); finisher = false; }
+            else if (!down) { n.holding = false; Resolve(n, Grade.Half, "LET GO TOO SOON!"); }
+        }
+    }
+
     void CheckMissed(float songTime)
     {
         foreach (var n in notes)
-            if (!n.judged && songTime - n.time > okWindow)
+            if (!n.judged && !n.holding && songTime - n.time > okWindow)
                 Resolve(n, Grade.Miss, "MISSED!");
     }
 
@@ -264,16 +302,18 @@ public class RhythmFight : MonoBehaviour
         }
 
         bool perfect = g == Grade.Perfect;
-        gusHp = Mathf.Max(0, gusHp - punchDamage * (perfect ? 1f : 0.5f));
+        float mult = finisher ? 3f : 1f;
+        gusHp = Mathf.Max(0, gusHp - punchDamage * mult * (perfect ? 1f : 0.5f));
         hits++;
         if (perfect) perfects++;
 
-        ShowJudge(perfect ? "PERFECT!" : label, perfect ? new Color(1f, 0.85f, 0.2f) : Color.white);
+        ShowJudge(finisher ? "KNOCKOUT PUNCH!" : perfect ? "PERFECT!" : label, perfect ? new Color(1f, 0.85f, 0.2f) : Color.white);
         Play(ref robberAnim, robber, Lunge(perfect ? 110f : 70f));
         Play(ref gusAnim, gus, Reel(perfect ? 60f : 30f, perfect ? 14f : 6f));
         StartCoroutine(FlashRing(perfect ? new Color(1f, 0.85f, 0.2f) : Color.white));
 
-        if (perfect) HitStop(0.07f, 16f);
+        if (finisher) HitStop(0.14f, 26f);
+        else if (perfect) HitStop(0.07f, 16f);
     }
 
     void Dodge(Grade g, string label)
@@ -499,6 +539,7 @@ public class RhythmFight : MonoBehaviour
 
     IEnumerator ArrowFeedback(Note n, bool good)
     {
+        if (n.tail != null) Destroy(n.tail.gameObject);
         var rt = n.rect;
         var img = rt.GetComponent<Image>();
         int i = (int)n.dir;
@@ -580,6 +621,35 @@ public class RhythmFight : MonoBehaviour
         if (string.IsNullOrEmpty(nextScene)) return;
         if (!string.IsNullOrEmpty(nextSpawn)) RoomTransition.Go(nextScene, nextSpawn);
         else SceneManager.LoadScene(nextScene);
+    }
+
+    RectTransform MakeTail(RectTransform arrow)
+    {
+        var go = new GameObject("Tail", typeof(RectTransform));
+        go.transform.SetParent(arrow, false);
+        go.transform.SetAsFirstSibling();
+        var img = go.AddComponent<Image>();
+        img.raycastTarget = false;
+        img.color = new Color(0.35f, 0.9f, 1f, 0.75f); // cyan to match the up arrow
+        var rt = img.rectTransform;
+        rt.pivot = new Vector2(0, 0.5f);
+        rt.anchoredPosition = Vector2.zero;
+        return rt;
+    }
+
+    // leans back and pulls the fist in while you hold
+    IEnumerator WindUp()
+    {
+        float t = 0;
+        while (true)
+        {
+            t += Time.deltaTime;
+            float k = Mathf.Clamp01(t / 0.25f);
+            float shake = Mathf.Sin(t * 40f) * 3f * k;
+            robber.anchoredPosition = robberHome + new Vector2(-40f * k + shake, 0);
+            robber.localRotation = Quaternion.Euler(0, 0, 10f * k);
+            yield return null;
+        }
     }
 
     RectTransform MakeArrow(Dir dir)

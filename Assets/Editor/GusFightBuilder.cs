@@ -12,7 +12,7 @@ public static class GusFightBuilder
 {
     const string ScenePath = "Assets/Scenes/GusFight.unity";
     const string Art = "Assets/Sprites/Minigame/";
-    static Font font;
+    internal static Font font;
 
     [MenuItem("Tools/Cheese Heist/Build Gus Fight Scene")]
     public static void Build()
@@ -155,7 +155,7 @@ public static class GusFightBuilder
     }
 
     // health bar like the mockup: dark frame, name on the left, coloured fill
-    static RectTransform Bar(Transform root, string who, Vector2 pos, Color fill, bool leftSide)
+    internal static RectTransform Bar(Transform root, string who, Vector2 pos, Color fill, bool leftSide)
     {
         var frame = Img(root, who + "Bar", new Color32(235, 235, 235, 255), pos, new Vector2(560, 64));
         Border(frame.gameObject, 5);
@@ -168,7 +168,7 @@ public static class GusFightBuilder
         return bar.rectTransform;
     }
 
-    static void Border(GameObject go, float size)
+    internal static void Border(GameObject go, float size)
     {
         var o = go.AddComponent<Outline>();
         o.effectColor = Color.black;
@@ -178,14 +178,14 @@ public static class GusFightBuilder
         o2.effectDistance = new Vector2(-size, size);
     }
 
-    static Sprite Load(string path)
+    internal static Sprite Load(string path)
     {
         var s = AssetDatabase.LoadAssetAtPath<Sprite>(path);
         if (s == null) Debug.LogWarning("missing sprite " + path);
         return s;
     }
 
-    static Sprite FindSprite(string name)
+    internal static Sprite FindSprite(string name)
     {
         foreach (var guid in AssetDatabase.FindAssets(name + " t:Sprite", new[] { "Assets/Sprites/Characters" }))
         {
@@ -198,7 +198,7 @@ public static class GusFightBuilder
     }
 
     // soft spotlight cone + floor pool, generated so we don't need extra art for them
-    static void MakeLightTextures()
+    internal static void MakeLightTextures()
     {
         Directory.CreateDirectory(Art);
         if (!File.Exists(Art + "spotlight_cone.png"))
@@ -234,7 +234,7 @@ public static class GusFightBuilder
         AssetDatabase.Refresh();
     }
 
-    static Image Img(Transform parent, string name, Color c, Vector2 pos, Vector2 size)
+    internal static Image Img(Transform parent, string name, Color c, Vector2 pos, Vector2 size)
     {
         var go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
@@ -246,7 +246,7 @@ public static class GusFightBuilder
         return img;
     }
 
-    static Text Txt(Transform parent, string name, string text, int size, Color c, Vector2 pos, Vector2 box)
+    internal static Text Txt(Transform parent, string name, string text, int size, Color c, Vector2 pos, Vector2 box)
     {
         var go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
