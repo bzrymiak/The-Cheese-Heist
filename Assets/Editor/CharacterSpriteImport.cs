@@ -20,6 +20,16 @@ public class CharacterSpriteImport : AssetPostprocessor
         imp.textureCompression = TextureImporterCompression.Uncompressed;
         imp.mipmapEnabled = false;
         imp.maxTextureSize = 2048;
+
+        // tile_ textures get repeated across big areas (laser corridor walls etc)
+        if (System.IO.Path.GetFileName(assetPath).StartsWith("tile_"))
+        {
+            var set = new TextureImporterSettings();
+            imp.ReadTextureSettings(set);
+            set.spriteMeshType = SpriteMeshType.FullRect;
+            set.wrapMode = TextureWrapMode.Repeat;
+            imp.SetTextureSettings(set);
+        }
     }
 }
 #endif
