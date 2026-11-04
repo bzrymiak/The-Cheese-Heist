@@ -18,25 +18,29 @@ MonoBehaviour:
   - The name's Tony, it's a pleasure to meet ya.
   - I've heard some things about you...
   - ...mostly that you're a nuisance to the community and a sneaky thief, which is
-    why I had my men hunt you down.
+    why I had my men get in touch.
   - Let's cut to the cheese. I'm offering you $1M for the biggest job ever... to
     steal Chef Reggie's iconic secret cheese recipe.
   - Ever since he opened up, all of my customers have abandoned me! I asked one of
     my regulars why...
   - He said the cheese is so good that a guy proposed to his pasta last week!!!
-  - 'So, are you up for the job? '
+  - 'So, a simple in-and-out recipe retrieval. Are you up for the job? '
   - There's nothing crazy about this cheese recipe. Listen closely now...
-  - "My intel says Reggie\u2019s restaurant is always empty after 9pm."
-  - He stores the recipe in a big safe tucked away in the basement.
+  - "My intel says Reggie\u2019s restaurant is always empty after 9pm, so there's
+    almost no chance you'll be caught."
+  - 'He stores the recipe in a big safe tucked away in the basement. '
   - "You\u2019re going to need to find clues to figure out the password, but I have
     some starting points for you."
-  - "Take a look at the file and when you\u2019re ready, I\u2019ll meet you outside! "
+  - "Take a look at the file on the table and grab the walkie talkie. When you\u2019re
+    ready, I\u2019ll meet you outside! "
   - You have no idea. Listen closely now...
-  - "My intel says Reggie\u2019s restaurant is always empty after 9pm."
+  - "My intel says Reggie\u2019s restaurant is always empty after 9pm, so there's
+    almost no chance you'll be caught."
   - He stores the recipe in a big safe tucked away in the basement.
   - "You\u2019re going to need to find clues to figure out the password, but I have
     some starting points for you."
-  - "Take a look at the file and when you\u2019re ready, I\u2019ll meet you outside! "
+  - "Take a look at the file on the table and grab the walkie talkie. When you\u2019re
+    ready, I\u2019ll meet you outside! "
   endDialogueLines: 0000000000000000000000010000000001
   autoStart: 1
   autoStartDelay: 1

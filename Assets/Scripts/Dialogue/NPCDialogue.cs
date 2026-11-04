@@ -10,7 +10,7 @@ public class NPCDialogue : ScriptableObject
    public bool[] endDialogueLines;
     public bool autoStart = false;
     public float autoStartDelay = 3f;
-   public float typingSpeed = 0.05f;
+   public float typingSpeed = 0.03f;
 
    public bool skip = false;
    
