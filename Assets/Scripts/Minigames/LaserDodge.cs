@@ -23,7 +23,7 @@ public class LaserDodge : MonoBehaviour
         public bool zapped;
         // the laser shot coming at him
         public RectTransform bolt;
-        public Image core, glow;
+        public Image core, glow, halo;
         public bool fired;
     }
 
@@ -33,7 +33,6 @@ public class LaserDodge : MonoBehaviour
     public RectTransform boltLayer;    // shots fly in here (doesn't scroll)
     public RectTransform turretLow, turretHigh;
     public Image ledLow, ledHigh, muzzleLow, muzzleHigh;
-    public Image floorGlow;           // green light that follows the shots along the floor
     public RectTransform safe;         // inside world, sits at the end
     public RectTransform track;
     public RectTransform hitCircle;
@@ -51,7 +50,8 @@ public class LaserDodge : MonoBehaviour
 
     [Header("Arrow art (up, down)")]
     public Sprite arrowUp, arrowDown, arrowUpHit, arrowDownHit, arrowUpOff, arrowDownOff;
-    public Sprite glowSprite;
+    public Sprite beamSprite;   // pixel laser strip, same look as the beams in the figma vault
+    public Sprite sparkSprite;  // pixel spark for hits + muzzle flash
     public float arrowSize = 110f;
 
     [Header("Timing")]
@@ -405,8 +405,8 @@ public class LaserDodge : MonoBehaviour
         }
         if (muzzle != null)
         {
-            muzzle.color = new Color(0.4f, 1f, 0.55f, k * 0.8f);
-            muzzle.rectTransform.localScale = Vector3.one * (0.6f + 0.6f * k);
+            muzzle.color = new Color(1f, 1f, 1f, k);
+            muzzle.rectTransform.localScale = Vector3.one * (0.4f + 0.8f * k);
         }
     }
 
@@ -438,10 +438,16 @@ public class LaserDodge : MonoBehaviour
                 n.bolt.sizeDelta = new Vector2(Mathf.Clamp(tailX - front, 0, maxLen), n.bolt.sizeDelta.y);
             }
 
-            float flick = 0.85f + 0.15f * Mathf.Sin(Time.time * 50f);
-            Color col = n.zapped ? new Color(1f, 0.3f, 0.3f) : new Color(0.35f, 1f, 0.5f);
-            n.core.color = new Color(Mathf.Lerp(1f, col.r, 0.35f), Mathf.Lerp(1f, col.g, 0.35f), Mathf.Lerp(1f, col.b, 0.35f), flick);
-            n.glow.color = new Color(col.r, col.g, col.b, 0.5f * flick);
+            // buzzes: thickness jitters, brightness strobes, halo pulses. goes red once it hits him
+            bool strobe = Mathf.FloorToInt(Time.time * 24f + n.time * 7f) % 2 == 0;
+            float thick = strobe ? 1.12f : 0.92f;
+            n.core.rectTransform.localScale = new Vector3(1f, thick, 1f);
+            Color hot = n.zapped ? new Color(1f, 0.4f, 0.4f) : (strobe ? Color.white : new Color(0.8f, 1f, 0.8f));
+            n.core.color = hot;
+            n.glow.color = strobe ? Color.white : (n.zapped ? new Color(1f, 0.6f, 0.6f) : new Color(0.75f, 1f, 0.75f));
+            Color haloCol = n.zapped ? new Color(1f, 0.2f, 0.2f) : new Color(0.3f, 1f, 0.35f);
+            haloCol.a = 0.18f + 0.12f * Mathf.Sin(Time.time * 30f);
+            n.halo.color = haloCol;
 
             // gone off the left side
             if (front + n.bolt.sizeDelta.x < -1100f)
@@ -449,20 +455,6 @@ public class LaserDodge : MonoBehaviour
                 Destroy(n.bolt.gameObject);
                 n.bolt = null;
             }
-        }
-
-        // floor lights up under the closest shot
-        if (floorGlow != null)
-        {
-            float best = 9999f, bx = 0;
-            foreach (var n in notes)
-            {
-                if (n.bolt == null) continue;
-                float d = Mathf.Abs(n.bolt.anchoredPosition.x - robberX);
-                if (d < best) { best = d; bx = n.bolt.anchoredPosition.x + n.bolt.sizeDelta.x * 0.5f; }
-            }
-            floorGlow.rectTransform.anchoredPosition = new Vector2(bx, floorY);
-            floorGlow.color = new Color(0.35f, 1f, 0.5f, best < 9999f ? 0.22f : 0f);
         }
     }
 
@@ -474,13 +466,18 @@ public class LaserDodge : MonoBehaviour
         n.bolt = new GameObject("Shot", typeof(RectTransform)).GetComponent<RectTransform>();
         n.bolt.SetParent(boltLayer, false);
         n.bolt.pivot = new Vector2(0, 0.5f);
-        n.bolt.sizeDelta = new Vector2(len, 40f);
+        n.bolt.sizeDelta = new Vector2(len, 56f);
         n.bolt.anchoredPosition = new Vector2(turret.anchoredPosition.x, y);
 
-        n.glow = MakeImg(n.bolt, "Glow", glowSprite, Color.clear, Vector2.zero, Vector2.zero);
-        Fill(n.glow.rectTransform, new Vector2(-30, -14), new Vector2(30, 14));
-        n.core = MakeImg(n.bolt, "Core", null, Color.clear, Vector2.zero, Vector2.zero);
-        Fill(n.core.rectTransform, new Vector2(0, 16), new Vector2(0, -16));
+        // faint wider band behind it so it reads as a hot beam, then the thick crisp beam on top,
+        // then a white hot square head at the front
+        n.halo = MakeImg(n.bolt, "Halo", null, Color.clear, Vector2.zero, Vector2.zero);
+        Fill(n.halo.rectTransform, new Vector2(-6, 0), new Vector2(0, 0));
+        n.core = MakeImg(n.bolt, "Beam", beamSprite, Color.white, Vector2.zero, Vector2.zero);
+        Fill(n.core.rectTransform, new Vector2(0, 10), new Vector2(0, -10));
+        n.glow = MakeImg(n.bolt, "Head", null, Color.white, Vector2.zero, new Vector2(26, 30));
+        n.glow.rectTransform.anchorMin = n.glow.rectTransform.anchorMax = new Vector2(0, 0.5f);
+        n.glow.rectTransform.anchoredPosition = new Vector2(4, 0);
     }
 
     static void Fill(RectTransform rt, Vector2 min, Vector2 max)
@@ -509,17 +506,37 @@ public class LaserDodge : MonoBehaviour
         float y = n.dir == Dir.Up ? lowBeamY : highBeamY;
         if (n.bolt != null) { Destroy(n.bolt.gameObject); n.bolt = null; }
 
-        var flash = MakeImg(boltLayer, "Burst", glowSprite, new Color(1f, 0.4f, 0.35f, 0.9f), new Vector2(robberX + 40f, y), new Vector2(60, 60));
-        float t = 0;
-        while (t < 0.3f)
+        Vector2 at = new Vector2(robberX + 40f, y);
+        var flash = MakeImg(boltLayer, "Spark", sparkSprite, Color.white, at, new Vector2(48, 48));
+
+        // a few square bits fly out, pixel style
+        var bits = new Image[6];
+        var vel = new Vector2[6];
+        for (int i = 0; i < bits.Length; i++)
         {
-            t += Time.unscaledDeltaTime;
-            float k = t / 0.3f;
-            flash.rectTransform.sizeDelta = Vector2.one * Mathf.Lerp(60f, 320f, k);
-            flash.color = new Color(1f, 0.4f, 0.35f, 0.9f * (1f - k));
+            bits[i] = MakeImg(boltLayer, "Bit", null, new Color(0.6f, 1f, 0.6f), at, new Vector2(10, 10));
+            float a = (i / (float)bits.Length) * Mathf.PI * 2f + Random.Range(-0.3f, 0.3f);
+            vel[i] = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * Random.Range(250f, 450f);
+        }
+
+        float t = 0;
+        while (t < 0.35f)
+        {
+            float dt = Time.unscaledDeltaTime;
+            t += dt;
+            float k = t / 0.35f;
+            flash.rectTransform.sizeDelta = Vector2.one * Mathf.Lerp(48f, 140f, k);
+            flash.color = new Color(1f, 1f, 1f, 1f - k);
+            for (int i = 0; i < bits.Length; i++)
+            {
+                bits[i].rectTransform.anchoredPosition += vel[i] * dt;
+                vel[i] += Vector2.down * 900f * dt;
+                bits[i].color = new Color(0.6f, 1f, 0.6f, 1f - k);
+            }
             yield return null;
         }
         Destroy(flash.gameObject);
+        foreach (var b in bits) Destroy(b.gameObject);
     }
 
     Image MakeImg(RectTransform parent, string name, Sprite s, Color c, Vector2 pos, Vector2 size)

@@ -72,8 +72,7 @@ public static class LaserDodgeBuilder
         // a few dim ceiling lamps so the wall isn't flat
         for (float x = -900f; x < length - 1200f; x += 900f)
         {
-            var lamp = G.Img(world, "LampGlow", new Color(0.55f, 1f, 0.7f, 0.08f), new Vector2(x, 120f), new Vector2(520f, 380f));
-            lamp.sprite = G.Load(Art + "light_pool.png");
+            G.Img(world, "LampLight", new Color(0.55f, 1f, 0.7f, 0.05f), new Vector2(x, 60f), new Vector2(260f, 340f));
             G.Img(world, "Lamp", new Color32(60, 72, 64, 255), new Vector2(x, 236f), new Vector2(90f, 14f));
         }
 
@@ -87,10 +86,6 @@ public static class LaserDodgeBuilder
         G.Img(door.transform, "Handle", new Color32(40, 44, 48, 255), new Vector2(60, 20), new Vector2(16, 70));
         var keypad = G.Img(door.transform, "Keypad", new Color32(20, 40, 28, 255), new Vector2(0, -70), new Vector2(120, 50));
         G.Border(keypad.gameObject, 2);
-        var safeGlow = G.Img(world, "SafeGlow", new Color(1f, 0.85f, 0.4f, 0.12f), new Vector2(0, floorTop + 150f), new Vector2(560, 520));
-        safeGlow.sprite = G.Load(Art + "light_pool.png");
-        safeGlow.transform.SetSiblingIndex(safe.transform.GetSiblingIndex());
-        safeGlow.gameObject.AddComponent<FollowX>().target = safe.rectTransform;
 
         // ---- robber ----
         var shadow = G.Img(root, "RobberShadow", new Color(0, 0, 0, 0.45f), new Vector2(-420, floorTop), new Vector2(170, 40));
@@ -105,9 +100,6 @@ public static class LaserDodgeBuilder
         var dark = G.Img(root, "Darkness", new Color(0, 0, 0, 0.35f), Vector2.zero, Vector2.zero);
         Stretch(dark.rectTransform);
 
-        // light the shots throw on the floor
-        var floorGlow = G.Img(root, "FloorGlow", new Color(0.35f, 1f, 0.5f, 0), new Vector2(0, floorTop), new Vector2(520, 90));
-        floorGlow.sprite = G.Load(Art + "light_pool.png");
 
         // turrets at the far end of the hall, same metal boxes + leds as the laser posts in the vault
         float lowY = -318f, highY = -165f;
@@ -163,8 +155,7 @@ public static class LaserDodgeBuilder
         // alarm effects, outside the stage so they don't shake
         var red = G.Img(canvasGo.transform, "RedPulse", new Color(1, 0, 0, 0), Vector2.zero, Vector2.zero);
         Stretch(red.rectTransform);
-        var siren = G.Img(canvasGo.transform, "Siren", new Color(1, 0.15f, 0.15f, 0), new Vector2(-860, 330), new Vector2(520, 120));
-        siren.sprite = G.Load(Art + "light_pool.png");
+        var siren = G.Img(canvasGo.transform, "Siren", new Color(1, 0.15f, 0.15f, 0), new Vector2(-860, 330), new Vector2(420, 40));
 
         // ---- how to play card, shows before the countdown ----
         var card = G.Img(canvasGo.transform, "IntroCard", new Color(0, 0, 0, 0.82f), Vector2.zero, Vector2.zero);
@@ -188,7 +179,6 @@ public static class LaserDodgeBuilder
         game.turretLow = tLow; game.turretHigh = tHigh;
         game.ledLow = ledLow; game.ledHigh = ledHigh;
         game.muzzleLow = muzLow; game.muzzleHigh = muzHigh;
-        game.floorGlow = floorGlow;
         game.lowBeamY = lowY; game.highBeamY = highY;
         game.safe = safe.rectTransform;
         game.track = track;
@@ -204,7 +194,8 @@ public static class LaserDodgeBuilder
         game.redPulse = red;
         game.siren = siren;
         game.introCard = card.gameObject;
-        game.glowSprite = G.Load(Art + "light_pool.png");
+        game.beamSprite = G.Load(Art + "laser_beam_thick.png");
+        game.sparkSprite = G.Load(Art + "laser_spark.png");
         game.floorY = floorTop;
         game.arrowUp = G.Load(Art + "arrow_up.png");
         game.arrowDown = G.Load(Art + "arrow_down.png");
@@ -231,14 +222,13 @@ public static class LaserDodgeBuilder
         t.anchoredPosition = pos;
 
         float poleLen = Mathf.Abs(mountY - pos.y);
-        G.Img(t, "Pole", new Color32(30, 38, 34, 255), new Vector2(20, fromFloor ? -poleLen / 2f : poleLen / 2f), new Vector2(18, poleLen));
-        var body = G.Img(t, "Housing", new Color32(58, 66, 62, 255), new Vector2(20, 0), new Vector2(90, 70));
-        G.Border(body.gameObject, 3);
-        var barrel = G.Img(t, "Barrel", new Color32(40, 46, 44, 255), new Vector2(-48, 0), new Vector2(60, 26));
-        G.Border(barrel.gameObject, 2);
-        led = G.Img(t, "Led", new Color(1f, 0.25f, 0.25f, 1f), new Vector2(38, 18), new Vector2(14, 14));
-        muzzle = G.Img(t, "Muzzle", new Color(0.4f, 1f, 0.55f, 0), new Vector2(-82, 0), new Vector2(110, 110));
-        muzzle.sprite = G.Load(Art + "light_pool.png");
+        G.Img(t, "Pole", new Color32(22, 28, 25, 255), new Vector2(30, fromFloor ? -poleLen / 2f : poleLen / 2f), new Vector2(16, poleLen));
+        // same black rounded emitter block that holds the beams in the vault, just bigger
+        var body = G.Img(t, "Emitter", Color.white, new Vector2(10, 0), new Vector2(66, 88));
+        body.sprite = G.Load(Art + "laser_emitter.png");
+        led = G.Img(t, "Led", new Color(1f, 0.25f, 0.25f, 1f), new Vector2(22, 26), new Vector2(12, 12));
+        muzzle = G.Img(t, "Muzzle", new Color(1f, 1f, 1f, 0), new Vector2(-30, 0), new Vector2(64, 64));
+        muzzle.sprite = G.Load(Art + "laser_spark.png");
         return t;
     }
 
@@ -277,6 +267,49 @@ public static class LaserDodgeBuilder
             Save("tile_vault_wall.png", Bricks(new Color32(30, 52, 38, 255), new Color32(18, 32, 24, 255), new Color32(40, 66, 48, 255)));
         if (!File.Exists(Art + "tile_vault_floor.png"))
             Save("tile_vault_floor.png", Bricks(new Color32(24, 40, 30, 255), new Color32(12, 22, 16, 255), new Color32(34, 54, 40, 255), false));
+        if (!File.Exists(Art + "laser_beam_thick.png"))
+        {
+            // vertical slice of the figma beam, beefed up: dark edge, deep green, green, hot core, back out
+            Color32 edge = new Color32(10, 70, 20, 255), deep = new Color32(30, 150, 40, 255),
+                    green = new Color32(76, 230, 80, 255), light = new Color32(170, 255, 160, 255),
+                    core = new Color32(245, 255, 240, 255);
+            Color32[] rows = { edge, deep, green, green, light, core, core, light, green, green, deep, edge };
+            var tex = new Texture2D(4, rows.Length);
+            for (int y = 0; y < rows.Length; y++)
+                for (int x = 0; x < 4; x++) tex.SetPixel(x, y, rows[y]);
+            Save("laser_beam_thick.png", tex);
+        }
+        if (!File.Exists(Art + "laser_emitter.png"))
+        {
+            // rounded black block like the beam mounts on the vault walls
+            int w = 11, h = 15;
+            var tex = new Texture2D(w, h);
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    bool corner = (x == 0 || x == w - 1) && (y == 0 || y == h - 1);
+                    bool hi = x == 1 || y == h - 2;
+                    tex.SetPixel(x, y, corner ? new Color32(0, 0, 0, 0) : hi ? new Color32(48, 52, 50, 255) : new Color32(10, 10, 10, 255));
+                }
+            Save("laser_emitter.png", tex);
+        }
+        if (!File.Exists(Art + "laser_spark.png"))
+        {
+            // little 4 point pixel star
+            int n = 11, c = 5;
+            var tex = new Texture2D(n, n);
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    int dx = Mathf.Abs(x - c), dy = Mathf.Abs(y - c);
+                    Color32 col = new Color32(0, 0, 0, 0);
+                    if ((dx == 0 && dy <= 5) || (dy == 0 && dx <= 5)) col = new Color32(170, 255, 170, 255);
+                    if (dx == 1 && dy == 1) col = new Color32(110, 235, 110, 255);
+                    if (dx + dy <= 1) col = new Color32(255, 255, 255, 255);
+                    tex.SetPixel(x, y, col);
+                }
+            Save("laser_spark.png", tex);
+        }
         if (!File.Exists(Art + "tile_caution.png"))
         {
             var tex = new Texture2D(32, 16);
