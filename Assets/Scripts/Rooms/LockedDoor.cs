@@ -28,6 +28,7 @@ public class LockedDoor : MonoBehaviour
     public bool IsLocked { get; private set; } = true;
 
     private Transform player;
+    public string DoorId => doorId;
 
     void Start()
     {
@@ -50,6 +51,15 @@ public class LockedDoor : MonoBehaviour
 
         float dist = Vector2.Distance(player.position, transform.position);
         if (dist > unlockRadius) return;
+
+        bool hasKey = string.IsNullOrEmpty(requiredFlag) || GameFlags.Has(requiredFlag);
+        if (hasKey) Unlock();
+        else onUnlockFailed.Invoke();
+    }
+
+    public void TryUnlock()
+    {
+        if (!IsLocked) return;
 
         bool hasKey = string.IsNullOrEmpty(requiredFlag) || GameFlags.Has(requiredFlag);
         if (hasKey) Unlock();
