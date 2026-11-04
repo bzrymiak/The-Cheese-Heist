@@ -1992,6 +1992,14 @@ PrefabInstance:
       propertyPath: detailedView
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2121631547966083594, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2121631547966083594, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1455240149
+      objectReference: {fileID: 0}
     - target: {fileID: 2925268482388219747, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2076,6 +2084,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -2665508073322155791, guid: ef71d3390d10c47b188c83d133ef3cf7, type: 3}
+    - target: {fileID: 4860934304736331479, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4860934304736331479, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1299728803
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4686,8 +4702,8 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1299728803
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
@@ -4932,7 +4948,7 @@ TilemapCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1630416504}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -5958,6 +5974,14 @@ PrefabInstance:
     - target: {fileID: 1913056756167194086, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
       propertyPath: detailedView
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2121631547966083594, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2121631547966083594, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1455240149
       objectReference: {fileID: 0}
     - target: {fileID: 2925268482388219747, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
       propertyPath: m_Pivot.x

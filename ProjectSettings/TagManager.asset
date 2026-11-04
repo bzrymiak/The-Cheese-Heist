@@ -51,8 +51,14 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Player
+    uniqueID: 580601907
+    locked: 0
   - name: WalkBehind
     uniqueID: 1299728803
+    locked: 0
+  - name: UI
+    uniqueID: 1455240149
     locked: 0
   m_RenderingLayers:
   - Default
