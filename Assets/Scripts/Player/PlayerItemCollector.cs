@@ -46,8 +46,12 @@ public class PlayerItemCollector : MonoBehaviour
         Item item = nearest.GetComponent<Item>();
         if (item == null) return;
 
-        if (inventoryController.AddItem(nearest.gameObject))
+        ItemPickupTrigger trigger = nearest.GetComponent<ItemPickupTrigger>();
+        bool added = inventoryController.AddItem(nearest.gameObject);
+
+        if (added)
         {
+            if (trigger != null) trigger.Fire();
             Destroy(nearest.gameObject);
         }
     }

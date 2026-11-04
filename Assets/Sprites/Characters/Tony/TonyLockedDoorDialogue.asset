@@ -10,11 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bef253740f42c4ab48dd690d3489007a, type: 3}
-  m_Name: TonyPhoneDialogue
+  m_Name: TonyLockedDoorDialogue
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
   npcName: Tony
   npcPortrait: {fileID: 21300000, guid: 53300ddbcdd7842918cf802ec0b99956, type: 3}
-  dialogueLines: []
-  autoStart: 0
-  autoStartDelay: 3
+  dialogueLines:
+  - 'The door''s locked? I''m sure he keeps a key around there somewhere. Keep looking. '
+  endDialogueLines: 
+  autoStart: 1
+  autoStartDelay: 0
   typingSpeed: 0.03
+  skip: 0
+  choices: []

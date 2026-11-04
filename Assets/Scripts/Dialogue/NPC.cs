@@ -11,14 +11,14 @@ public class NPC : MonoBehaviour
 {
     public NPCDialogue dialogueData;
     private DialogueController dialogueUI;
-    // public GameObject dialoguePanel;
-    // public TMP_Text dialogueText, nameText;
-    // public Image portraitImage;
 
     private int dialogueIndex;
     private bool isTyping, isDialogueActive;
     public bool autoStart;
     public float autoStartDelay;
+
+    public bool manualOnly; // only runs when StartDialogue() is called
+    public bool repeatable; // can play every time its triggered
     private bool hasSpoken;
 
     // conversations already finished this run. static so it survives leaving and coming
@@ -45,7 +45,7 @@ public class NPC : MonoBehaviour
 
         if (finished.Contains(Key)) hasSpoken = true;
 
-        if (autoStart && !hasSpoken)
+        if (autoStart && !hasSpoken && !manualOnly)
         {
             StartCoroutine(AutoStartRoutine());
         }
@@ -64,7 +64,7 @@ public class NPC : MonoBehaviour
             {
                 NextLine();
             }
-            else
+            else if (!manualOnly)
             {
                 StartDialogue();
             }
@@ -77,7 +77,7 @@ public class NPC : MonoBehaviour
         StartDialogue();
     }
 
-    void StartDialogue()
+    public void StartDialogue()
     {
         if (isDialogueActive) return;
         if (hasSpoken) return;
@@ -205,8 +205,12 @@ public class NPC : MonoBehaviour
     {
         StopAllCoroutines();
         isDialogueActive = false;
-        hasSpoken = true;
-        finished.Add(Key);
+        if (!repeatable)
+        {
+            hasSpoken = true;
+            finished.Add(Key);
+        }
+
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
         PauseController.SetPause(false);
