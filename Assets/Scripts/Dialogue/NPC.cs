@@ -211,6 +211,9 @@ public class NPC : MonoBehaviour
             finished.Add(Key);
         }
 
+        // the dialogue box carries over between rooms, so any leftover choice buttons
+        // (like gus's fight / misunderstanding) would show up in the next conversation
+        dialogueUI.ClearChoices();
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
         PauseController.SetPause(false);
