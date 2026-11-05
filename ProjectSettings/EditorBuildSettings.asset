@@ -44,5 +44,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LaserDodge.unity
     guid: 8ec432001c5004bb1a5f8739c05b33a2
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: 75ddea5fa830d42b3891a361f7c9cd97
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

@@ -109,6 +109,16 @@ public static class GameOverBuilder
 
         var help = G.Txt(root, "Help", "arrow keys + enter, or click", 26, new Color(1, 1, 1, 0.45f), new Vector2(-470, -330), new Vector2(760, 40));
 
+        // if joann's exported frames are there, use them as-is and lay invisible buttons over her drawn ones
+        var koPng = AssetDatabase.LoadAssetAtPath<Sprite>(Art + "gameover_knockedout.png");
+        var caughtPng = AssetDatabase.LoadAssetAtPath<Sprite>(Art + "gameover_caught.png");
+        if (koPng != null && caughtPng != null)
+        {
+            UseFigmaFrames(root, ko, lz, koPng, caughtPng, t1, t2, help, retry, menu, ref retryOutline, ref menuOutline);
+            bg.color = new Color32(62, 62, 62, 255);
+            bg.sprite = null;
+        }
+
         var go = canvasGo.AddComponent<GameOver>();
         go.knockedOutArt = ko.gameObject;
         go.laserArt = lz.gameObject;
@@ -130,6 +140,53 @@ public static class GameOverBuilder
         EditorBuildSettings.scenes = list.ToArray();
 
         Debug.Log("game over screen built");
+    }
+
+    // figma frame is 1004x639, we fit it to the full width of the 1920 wide canvas and centre it
+    static void UseFigmaFrames(Transform root, RectTransform ko, RectTransform lz, Sprite koPng, Sprite caughtPng,
+        Text t1, Text t2, Text help, Button retry, Button menu, ref Image retryOutline, ref Image menuOutline)
+    {
+        const float scale = 1920f / 1004f;
+        Vector2 Frame(float x, float y) => new Vector2(x * scale - 960f, 639f * scale / 2f - y * scale);
+
+        // swap the rebuilt art for the full exported frames
+        foreach (Transform c in ko) c.gameObject.SetActive(false);
+        foreach (Transform c in lz) c.gameObject.SetActive(false);
+        var a = G.Img(ko, "Frame", Color.white, Vector2.zero, new Vector2(1920, 639 * scale));
+        a.sprite = koPng;
+        var b = G.Img(lz, "Frame", Color.white, Vector2.zero, new Vector2(1920, 639 * scale));
+        b.sprite = caughtPng;
+
+        // heading + button labels are already in the picture
+        t1.gameObject.SetActive(false);
+        t2.gameObject.SetActive(false);
+        help.rectTransform.anchoredPosition = new Vector2(0, -660);
+
+        // move the clickable buttons on top of the drawn ones and make them see-through
+        Vector2 size = new Vector2(367 * scale, 56 * scale);
+        Place(retry, retryOutline, Frame(33 + 183.5f, 354.5f + 28f), size);
+        Place(menu, menuOutline, Frame(33 + 183.5f, 434f + 28f), size);
+
+        // selection shows as a soft white glow over the drawn button instead of a frame behind it
+        retryOutline.color = new Color(1, 1, 1, 0.18f);
+        menuOutline.color = new Color(1, 1, 1, 0.18f);
+        retryOutline.transform.SetAsLastSibling();
+        menuOutline.transform.SetAsLastSibling();
+        retryOutline.raycastTarget = false;
+        menuOutline.raycastTarget = false;
+    }
+
+    static void Place(Button btn, Image outline, Vector2 pos, Vector2 size)
+    {
+        var rt = (RectTransform)btn.transform;
+        rt.anchoredPosition = pos;
+        rt.sizeDelta = size;
+        btn.GetComponent<Image>().color = new Color(1, 1, 1, 0);
+        btn.transition = Selectable.Transition.None;
+        foreach (Transform c in btn.transform) c.gameObject.SetActive(false);
+        rt.SetAsLastSibling();
+        outline.rectTransform.anchoredPosition = pos;
+        outline.rectTransform.sizeDelta = size;
     }
 
     static Button MakeButton(Transform root, string name, string label, Color fill, Vector2 pos, out Image outline)
