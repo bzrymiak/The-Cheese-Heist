@@ -137,7 +137,7 @@ public class RhythmFight : MonoBehaviour
         if (finished)
         {
             var kb = Keyboard.current;
-            if (kb != null && (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
+            if (LastFightWon && kb != null && (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
                 Leave();
             return;
         }
@@ -593,9 +593,23 @@ public class RhythmFight : MonoBehaviour
         if (LastFightWon) Play(ref gusAnim, gus, KnockOver(gus, -90f));
         else Play(ref robberAnim, robber, KnockOver(robber, 90f));
 
-        centerText.text = (LastFightWon ? "GUS IS DOWN!" : "YOU GOT KNOCKED OUT...")
-            + "\n<size=40>" + hits + "/" + notes.Count + " landed  -  " + perfects + " perfect\n\npress enter</size>";
         judgeText.text = "";
+
+        if (!LastFightWon)
+        {
+            // let the knock over play, then the knocked out screen
+            centerText.text = "";
+            StartCoroutine(LoseAfter(1.2f));
+            return;
+        }
+
+        centerText.text = "GUS IS DOWN!\n<size=40>" + hits + "/" + notes.Count + " landed  -  " + perfects + " perfect\n\npress enter</size>";
+    }
+
+    IEnumerator LoseAfter(float wait)
+    {
+        yield return new WaitForSecondsRealtime(wait);
+        GameOver.Show(GameOver.Kind.KnockedOut, SceneManager.GetActiveScene().name);
     }
 
     IEnumerator KnockOver(RectTransform who, float angle)
