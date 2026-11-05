@@ -586,6 +586,7 @@ public class RhythmFight : MonoBehaviour
             if (n.rect != null && !n.judged) Destroy(n.rect.gameObject);
 
         LastFightWon = gusHp <= 0 || (playerHp > 0 && gusHp < playerHp);
+        if (LastFightWon) GameFlags.Set(GusAftermath.KnockedOutFlag); // kitchen checks this to leave him lying there
         LastHits = hits;
         LastTotal = notes.Count;
 
