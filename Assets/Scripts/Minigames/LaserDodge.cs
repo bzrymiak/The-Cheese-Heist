@@ -25,6 +25,7 @@ public class LaserDodge : MonoBehaviour
         public RectTransform bolt;
         public Image core, glow, halo;
         public bool fired;
+        public Image icon;          // the arrow riding on the front of the shot
     }
 
     [Header("UI")]
@@ -57,11 +58,12 @@ public class LaserDodge : MonoBehaviour
     [Header("Timing")]
     public float scrollSpeed = 600f;   // arrow track
     public float runSpeed = 300f;      // how fast the corridor goes by
-    public float perfectWindow = 0.07f;
-    public float okWindow = 0.17f;
-    public float ignoreWindow = 0.3f;
+    public float perfectWindow = 0.08f;
+    public float okWindow = 0.2f;
+    public float ignoreWindow = 0.35f;
     public float chargeTime = 0.45f;   // how long a turret charges before it shoots
-    public float boltSpeed = 1500f;    // how fast the shots travel
+    public float boltSpeed = 1100f;    // how fast the shots travel
+    public float contactOffset = 95f;  // how far in front of the robber's middle a shot "touches" him
     public float countdown = 3f;
 
     [Header("Pattern")]
@@ -80,6 +82,10 @@ public class LaserDodge : MonoBehaviour
     public string nextScene = "LaserVault";
     public string nextSpawn = "past_lasers";
 
+    [Header("Feel")]
+    [Tooltip("Arrows ride on the lasers and land in rings on the robber, so you only watch one place. Untick to bring back the old top track.")]
+    public bool arrowsOnLasers = true;
+
     public static bool Passed;
 
     readonly List<Note> notes = new List<Note>();
@@ -89,6 +95,7 @@ public class LaserDodge : MonoBehaviour
     float judgeTimer, sirenTimer, timeScaleBase = 1f;
     Coroutine robberAnim, shakeAnim, knockAnim;
     Image robberImg;
+    Image ringLow, ringHigh;
     Color ringColor;
 
     void Start()
@@ -108,9 +115,90 @@ public class LaserDodge : MonoBehaviour
         if (safe != null) safe.anchoredPosition = new Vector2(robberX + (endTime + 1.6f) * runSpeed, safe.anchoredPosition.y);
 
         robber.anchoredPosition = new Vector2(robberX, floorY);
+        if (arrowsOnLasers) SetUpRings();
         UpdateHud();
         if (introCard != null) introCard.SetActive(true);
         else Begin();
+    }
+
+    // the cue lives right where the danger is: a ring in each lane on the robber's front edge.
+    // the arrow on the shot slides into the ring, so "dodge the laser" and "hit the arrow" are the same moment
+    void SetUpRings()
+    {
+        if (track != null) track.gameObject.SetActive(false);
+        var sprite = hitRing != null ? hitRing.sprite : null;
+        ringLow = MakeImg(boltLayer, "RingLow", sprite, new Color(1, 1, 1, 0.3f), new Vector2(ContactX, lowBeamY), new Vector2(110, 110));
+        ringHigh = MakeImg(boltLayer, "RingHigh", sprite, new Color(1, 1, 1, 0.3f), new Vector2(ContactX, highBeamY), new Vector2(110, 110));
+
+        // judgement pops up just above the robber instead of way up top
+        judgeText.rectTransform.anchoredPosition = new Vector2(robberX + 40f, highBeamY + 130f);
+        judgeText.alignment = TextAnchor.MiddleCenter;
+    }
+
+    // a lane's ring wakes up as a shot gets close to it
+    void UpdateRings(float t)
+    {
+        if (ringLow == null) return;
+        float low = 0f, high = 0f;
+        foreach (var n in notes)
+        {
+            if (n.state == 2) continue;
+            float until = n.time - t;
+            float k = n.state == 1 ? 1f : Mathf.Clamp01(1f - until / 0.6f);
+            if (n.dir == Dir.Up) low = Mathf.Max(low, k); else high = Mathf.Max(high, k);
+        }
+        Pulse(ringLow, low);
+        Pulse(ringHigh, high);
+    }
+
+    void Pulse(Image ring, float k)
+    {
+        if (ring.color.r < 0.99f || ring.color.b < 0.5f) return; // mid flash, leave it
+        ring.color = new Color(1, 1, 1, Mathf.Lerp(0.25f, 1f, k));
+        ring.rectTransform.localScale = Vector3.one * Mathf.Lerp(1f, 1.15f, k * (0.5f + 0.5f * Mathf.Sin(Time.time * 18f)));
+    }
+
+    IEnumerator FlashLane(Dir lane, Color c)
+    {
+        var ring = lane == Dir.Up ? ringLow : ringHigh;
+        if (ring == null) yield break;
+        ring.color = c;
+        ring.rectTransform.localScale = Vector3.one * 1.35f;
+        yield return new WaitForSecondsRealtime(0.12f);
+        ring.color = new Color(1, 1, 1, 0.3f);
+        ring.rectTransform.localScale = Vector3.one;
+    }
+
+    void Detach(Image icon)
+    {
+        var rt = icon.rectTransform;
+        Vector3 world = rt.position;
+        rt.SetParent(boltLayer, false);
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.position = world;
+    }
+
+    // little pop when an arrow on a shot gets judged
+    IEnumerator IconPop(Note n, bool good)
+    {
+        var icon = n.icon;
+        n.icon = null;
+        if (icon == null) yield break;
+        var s = n.dir == Dir.Up ? (good ? arrowUpHit : arrowUpOff) : (good ? arrowDownHit : arrowDownOff);
+        if (s != null) icon.sprite = s;
+        if (icon.rectTransform.parent != boltLayer) Detach(icon);
+        float t = 0, dur = good ? 0.18f : 0.3f;
+        Vector2 start = icon.rectTransform.anchoredPosition;
+        while (t < dur && icon != null)
+        {
+            t += Time.unscaledDeltaTime;
+            float k = t / dur;
+            if (good) icon.rectTransform.localScale = Vector3.one * (1f + 0.5f * k);
+            else icon.rectTransform.anchoredPosition = start + Vector2.down * 60f * k;
+            icon.color = new Color(1, 1, 1, 1f - k);
+            yield return null;
+        }
+        if (icon != null) Destroy(icon.gameObject);
     }
 
     void Begin()
@@ -187,6 +275,7 @@ public class LaserDodge : MonoBehaviour
         MoveNotes(t);
         UpdateTurrets(t);
         UpdateBolts(t);
+        UpdateRings(t);
         UpdateGuide();
         if (t >= 0) ReadInput(t);
         UpdateHolds(t);
@@ -285,6 +374,7 @@ public class LaserDodge : MonoBehaviour
             ducking = true;
             Play(Slide());
             ShowJudge("HOLD IT!", Color.white, 99f);
+            if (target.icon != null) Detach(target.icon);
             SwapArrow(target, true);
             return;
         }
@@ -315,6 +405,8 @@ public class LaserDodge : MonoBehaviour
         Color gold = new Color(1f, 0.85f, 0.2f);
         ShowJudge(label, perfect ? gold : Color.white, 0.5f);
         StartCoroutine(Pop(n, true));
+        StartCoroutine(IconPop(n, true));
+        StartCoroutine(FlashLane(n.dir, perfect ? new Color(1f, 0.85f, 0.2f) : new Color(0.6f, 1f, 0.6f)));
         if (n.hold <= 0) Play(n.dir == Dir.Up ? Jump() : Duck());
         else Play(StandUp());
         StartCoroutine(FlashRing(perfect ? gold : Color.white));
@@ -326,11 +418,13 @@ public class LaserDodge : MonoBehaviour
     {
         n.state = 2;
         n.zapped = true;
+        StartCoroutine(IconPop(n, false));
         StartCoroutine(Burst(n));
         cleared++;
         zaps++;
         ShowJudge(label, new Color(1f, 0.45f, 0.45f), 0.6f);
         StartCoroutine(Pop(n, false));
+        StartCoroutine(FlashLane(n.dir, new Color(1f, 0.3f, 0.3f)));
         Play(Zapped());
         if (knockAnim != null) StopCoroutine(knockAnim);
         knockAnim = StartCoroutine(KnockBack());
@@ -370,8 +464,12 @@ public class LaserDodge : MonoBehaviour
     // when a shot has to leave the turret so it reaches him right on the beat
     float FireTime(Note n, RectTransform turret)
     {
-        return n.time - (turret.anchoredPosition.x - robberX) / boltSpeed;
+        return n.time - (turret.anchoredPosition.x - ContactX) / boltSpeed;
     }
+
+    // where the shot visibly meets the robber (his front edge, not his middle).
+    // the arrow hits the circle at the exact moment the shot touches him here, so reacting to the laser = perfect
+    float ContactX => robberX + contactOffset;
 
     RectTransform TurretFor(Note n) => n.dir == Dir.Up ? turretLow : turretHigh;
 
@@ -426,13 +524,17 @@ public class LaserDodge : MonoBehaviour
             if (n.bolt == null) continue;
 
             // front of the shot reaches the robber exactly at n.time, long beams trail behind it
-            float front = robberX + (n.time - t) * boltSpeed;
+            float front = ContactX + (n.time - t) * boltSpeed;
             n.bolt.anchoredPosition = new Vector2(front, n.bolt.anchoredPosition.y);
+
+            // while you're holding, the arrow sits in the ring until the beam's done
+            if (n.icon != null && n.state == 1)
+                n.icon.rectTransform.anchoredPosition = new Vector2(ContactX, n.bolt.anchoredPosition.y);
 
             // a long beam keeps pouring out of the turret until its tail has left
             if (n.hold > 0)
             {
-                float tailX = robberX + (n.time + n.hold - t) * boltSpeed;
+                float tailX = ContactX + (n.time + n.hold - t) * boltSpeed;
                 float maxLen = turret.anchoredPosition.x - front;
                 n.bolt.sizeDelta = new Vector2(Mathf.Clamp(tailX - front, 0, maxLen), n.bolt.sizeDelta.y);
             }
@@ -477,6 +579,15 @@ public class LaserDodge : MonoBehaviour
         n.glow = MakeImg(n.bolt, "Head", null, Color.white, Vector2.zero, new Vector2(26, 30));
         n.glow.rectTransform.anchorMin = n.glow.rectTransform.anchorMax = new Vector2(0, 0.5f);
         n.glow.rectTransform.anchoredPosition = new Vector2(4, 0);
+
+        if (arrowsOnLasers)
+        {
+            // the arrow rides on the tip of the shot
+            n.icon = MakeImg(n.bolt, "Arrow", n.dir == Dir.Up ? arrowUp : arrowDown, Color.white, Vector2.zero, new Vector2(84, 84));
+            n.icon.preserveAspect = true;
+            n.icon.rectTransform.anchorMin = n.icon.rectTransform.anchorMax = new Vector2(0, 0.5f);
+            n.icon.rectTransform.anchoredPosition = Vector2.zero;
+        }
     }
 
     static void Fill(RectTransform rt, Vector2 min, Vector2 max)
@@ -505,7 +616,7 @@ public class LaserDodge : MonoBehaviour
         float y = n.dir == Dir.Up ? lowBeamY : highBeamY;
         if (n.bolt != null) { Destroy(n.bolt.gameObject); n.bolt = null; }
 
-        Vector2 at = new Vector2(robberX + 40f, y);
+        Vector2 at = new Vector2(ContactX, y);
         var flash = MakeImg(boltLayer, "Spark", sparkSprite, Color.white, at, new Vector2(48, 48));
 
         // a few square bits fly out, pixel style
