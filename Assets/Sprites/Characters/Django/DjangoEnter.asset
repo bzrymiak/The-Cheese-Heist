@@ -24,7 +24,7 @@ MonoBehaviour:
   - I'm out of here!
   endDialogueLines: 000000010001
   autoStart: 1
-  autoStartDelay: 2
+  autoStartDelay: 1
   typingSpeed: 0.03
   skip: 0
   choices:
