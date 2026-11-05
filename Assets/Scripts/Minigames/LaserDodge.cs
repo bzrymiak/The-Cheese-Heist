@@ -173,7 +173,6 @@ public class LaserDodge : MonoBehaviour
             if (kb != null && (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
             {
                 if (won) Leave();
-                else SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
             UpdateSiren();
             return;
@@ -827,8 +826,15 @@ public class LaserDodge : MonoBehaviour
         {
             Play(Zapped());
             if (redPulse != null) redPulse.color = new Color(1, 0, 0, 0.45f);
-            centerText.text = "ALARM TRIPPED!\n<size=40>the lasers got you\n\npress enter to try again</size>";
+            centerText.text = "ALARM TRIPPED!";
+            StartCoroutine(LoseAfter(1.3f));
         }
+    }
+
+    IEnumerator LoseAfter(float wait)
+    {
+        yield return new WaitForSecondsRealtime(wait);
+        GameOver.Show(GameOver.Kind.Lasers, SceneManager.GetActiveScene().name);
     }
 
     void OnDisable()
