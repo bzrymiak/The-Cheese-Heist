@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 593301215}
   - component: {fileID: 593301214}
   m_Layer: 0
-  m_Name: disable-laser_0
+  m_Name: button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

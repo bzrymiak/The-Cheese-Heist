@@ -1278,6 +1278,7 @@ GameObject:
   m_Component:
   - component: {fileID: 802803770}
   - component: {fileID: 802803771}
+  - component: {fileID: 802803772}
   m_Layer: 0
   m_Name: Django
   m_TagString: Untagged
@@ -1349,17 +1350,35 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 6949311036198413393, guid: 00cdb3640705d4d109cebf4e3b89004a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 00cdb3640705d4d109cebf4e3b89004a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.28125, y: 0.28125}
+  m_Size: {x: 1.375, y: 1.375}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &802803772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802803769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5900e1580f51544f8aa777f35b5de3cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPC
+  dialogueData: {fileID: 11400000, guid: 7ef2231254f4b4122aba48e3ba275734, type: 2}
+  autoStart: 1
+  autoStartDelay: 1
+  manualOnly: 0
+  repeatable: 0
+  actions: []
 --- !u!1 &806980084
 GameObject:
   m_ObjectHideFlags: 0
