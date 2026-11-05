@@ -838,6 +838,7 @@ public class LaserDodge : MonoBehaviour
 
     void Leave()
     {
+        GameFlags.Set("LasersDodged");
         if (string.IsNullOrEmpty(nextScene)) return;
         if (!string.IsNullOrEmpty(nextSpawn)) RoomTransition.Go(nextScene, nextSpawn);
         else SceneManager.LoadScene(nextScene);

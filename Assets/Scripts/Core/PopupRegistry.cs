@@ -19,6 +19,7 @@ public class PopupRegistry : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null && Instance != this) return;
         Instance = this;
         
     }

@@ -55,7 +55,7 @@ public class InspectableItem : MonoBehaviour
     {
         var kb = Keyboard.current;
         if (kb == null) return;
-
+        
         // popup is open: I or Escape closes it (checked before the pause guard,
         // since the popup itself may have paused the game)
         if (popupOpen)
@@ -79,6 +79,17 @@ public class InspectableItem : MonoBehaviour
         Inspect();
     }
 
+    GameObject GetPopup()
+    {
+        if (popupPanel == null && !string.IsNullOrEmpty(popupId))
+            popupPanel = PopupRegistry.Get(popupId);
+
+        if (popupPanel == null)
+            Debug.LogWarning($"[Inspectable] '{name}': no popup. popupId='{popupId}', registryExists={PopupRegistry.Instance != null}");
+
+        return popupPanel;
+    }
+
     public void Inspect()
     {
         if (onlyOnce && hasInspected) return;
@@ -87,7 +98,7 @@ public class InspectableItem : MonoBehaviour
         if (!string.IsNullOrEmpty(flagId))
             GameFlags.Set(flagId);
 
-        if (popupPanel != null)
+        if (GetPopup() != null)
             OpenPopup();
 
         onInspected.Invoke();
