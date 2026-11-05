@@ -342,38 +342,120 @@ public static class LaserDodgeBuilder
         File.WriteAllBytes(Art + file, tex.EncodeToPNG());
     }
 
-    // puts a trigger on the caution line in the vault (step past it and the mini game starts)
-    // and a spawn by the safe for when you come back. only touches those two things
+    // brooke rebuilt the vault + safe room with tilemaps, so everything here is placed off the tilemaps
+    // instead of hardcoded pixels. safe to run again, it clears what it made last time.
+    //   vault: laser gate just in front of the laser, door up into the safe room, spawns for coming back
+    //   safe room: door at the bottom back down to the vault, spawn for arriving
     [MenuItem("Tools/Cheese Heist/Hook Up Laser Vault")]
     public static void HookUpVault()
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+
+        // ---- laser vault ----
         var scene = EditorSceneManager.OpenScene("Assets/Scenes/LaserVault.unity");
+        if (!FloorBounds("Ground", out var v)) { Debug.LogError("no Ground tilemap in LaserVault"); return; }
 
-        var old = GameObject.Find("LaserGate");
-        if (old != null) Object.DestroyImmediate(old);
-        foreach (var sp in Object.FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None))
-            if (sp.id == "past_lasers") Object.DestroyImmediate(sp.gameObject);
+        Clear("LaserGate");
+        Clear("Door to SafeRoom");
+        ClearSpawn("past_lasers");
+        ClearSpawn("from_saferoom");
 
-        // vault art is 738x526 at 64 px per unit, centred on 0,0
-        Vector2 W(float x, float y) => new Vector2((x - 369f) / 64f, (263f - y) / 64f);
+        // the door sits where brooke put the LockedDoor sprite on the top wall
+        var lockedDoor = GameObject.Find("LockedDoor");
+        float doorX = lockedDoor != null ? lockedDoor.transform.position.x : v.center.x;
+
+        // the laser runs across the middle of the room. gate goes right in front of it
+        var laser = GameObject.Find("Laser");
+        float laserY = laser != null ? laser.transform.position.y : v.center.y;
 
         var gate = new GameObject("LaserGate");
-        gate.transform.position = W(369, 390);
-        var box = gate.AddComponent<BoxCollider2D>();
-        box.isTrigger = true;
-        box.size = new Vector2(706f / 64f, 60f / 64f);
+        gate.transform.position = new Vector2(v.center.x, laserY - 0.7f);
+        var gbox = gate.AddComponent<BoxCollider2D>();
+        gbox.isTrigger = true;
+        gbox.size = new Vector2(v.size.x, 0.5f);
         gate.AddComponent<LaserGate>();
 
-        var spawns = GameObject.Find("Spawns");
-        var sp2 = new GameObject("Spawn past_lasers");
-        if (spawns != null) sp2.transform.SetParent(spawns.transform);
-        sp2.transform.position = W(320, 165);
-        sp2.AddComponent<SpawnPoint>().id = "past_lasers";
+        var doors = Parent("Doors");
+        var spawns = Parent("Spawns");
+        MakeDoor(doors, "Door to SafeRoom", new Vector2(doorX, v.yMax - 0.3f), new Vector2(1.2f, 0.6f), "SafeRoom", "from_vault");
+        MakeSpawn(spawns, "from_saferoom", new Vector2(doorX, v.yMax - 1.3f));
+        MakeSpawn(spawns, "past_lasers", new Vector2(doorX, laserY + 1.1f));
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
-        Debug.Log("laser vault hooked up");
+
+        // ---- safe room ----
+        scene = EditorSceneManager.OpenScene("Assets/Scenes/SafeRoom.unity");
+        if (!FloorBounds("Floor", out var r)) { Debug.LogError("no Floor tilemap in SafeRoom"); return; }
+
+        Clear("Door to LaserVault");
+        ClearSpawn("from_vault");
+
+        // doorway is the gap in the middle of the bottom wall (same as the figma map)
+        doors = Parent("Doors");
+        spawns = Parent("Spawns");
+        MakeDoor(doors, "Door to LaserVault", new Vector2(r.center.x, r.yMin + 0.3f), new Vector2(1.4f, 0.6f), "LaserVault", "from_saferoom");
+        MakeSpawn(spawns, "from_vault", new Vector2(r.center.x, r.yMin + 1.3f));
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+
+        Debug.Log("laser vault + safe room hooked up");
+    }
+
+    // world space rect covering every painted tile on that tilemap
+    static bool FloorBounds(string mapName, out Rect rect)
+    {
+        rect = default;
+        var map = Object.FindObjectsByType<UnityEngine.Tilemaps.Tilemap>(FindObjectsSortMode.None)
+            .FirstOrDefault(t => t.gameObject.name == mapName);
+        if (map == null) return false;
+        map.CompressBounds();
+        var b = map.cellBounds;
+        Vector2 min = map.CellToWorld(b.min);
+        Vector2 max = map.CellToWorld(b.max);
+        rect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        return true;
+    }
+
+    static Transform Parent(string name)
+    {
+        var go = GameObject.Find(name);
+        if (go == null) go = new GameObject(name);
+        return go.transform;
+    }
+
+    static void Clear(string name)
+    {
+        var go = GameObject.Find(name);
+        if (go != null) Object.DestroyImmediate(go);
+    }
+
+    static void ClearSpawn(string id)
+    {
+        foreach (var sp in Object.FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None))
+            if (sp.id == id) Object.DestroyImmediate(sp.gameObject);
+    }
+
+    static void MakeDoor(Transform parent, string name, Vector2 pos, Vector2 size, string scene, string spawn)
+    {
+        var go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+        go.transform.position = pos;
+        var box = go.AddComponent<BoxCollider2D>();
+        box.isTrigger = true;
+        box.size = size;
+        var door = go.AddComponent<RoomDoor>();
+        door.targetScene = scene;
+        door.targetSpawn = spawn;
+    }
+
+    static void MakeSpawn(Transform parent, string id, Vector2 pos)
+    {
+        var go = new GameObject("Spawn " + id);
+        go.transform.SetParent(parent, false);
+        go.transform.position = pos;
+        go.AddComponent<SpawnPoint>().id = id;
     }
 }
 #endif
