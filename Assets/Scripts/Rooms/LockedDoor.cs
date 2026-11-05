@@ -13,6 +13,7 @@ public class LockedDoor : MonoBehaviour
 
     [Header("Interaction")]
     public float unlockRadius = 1.5f;
+    public bool autoUnlockOnFlag;
 
     [Tooltip("Scene transition doorway, active on unlocked")]
     public GameObject blocker;
@@ -38,6 +39,9 @@ public class LockedDoor : MonoBehaviour
 
         // already unlocked earlier (e.g. before a scene change)
         if (!string.IsNullOrEmpty(doorId) && GameFlags.Has(doorId))
+            Unlock();
+
+        if (autoUnlockOnFlag && !string.IsNullOrEmpty(requiredFlag) && GameFlags.Has(requiredFlag))
             Unlock();
     }
 
@@ -83,5 +87,21 @@ public class LockedDoor : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, unlockRadius);
+    }
+
+        void OnEnable()
+    {
+        GameFlags.FlagChanged += OnFlagChanged;
+    }
+
+    void OnDisable()
+    {
+        GameFlags.FlagChanged -= OnFlagChanged;
+    }
+
+    void OnFlagChanged(string id)
+    {
+        if (autoUnlockOnFlag && id == requiredFlag && GameFlags.Has(requiredFlag))
+            Unlock();
     }
 }

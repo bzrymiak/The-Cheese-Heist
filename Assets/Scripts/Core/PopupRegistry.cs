@@ -41,6 +41,7 @@ public class PopupRegistry : MonoBehaviour
 
     public void RequestClose()
     {
+        Debug.Log($"[PopupRegistry] RequestClose. subscribers={(CloseRequested != null ? CloseRequested.GetInvocationList().Length : 0)}");
         CloseRequested?.Invoke();
     }
 }

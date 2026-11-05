@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 95633263}
   - component: {fileID: 95633262}
+  - component: {fileID: 95633264}
   m_Layer: 0
   m_Name: LockedDoor
   m_TagString: Untagged
@@ -211,6 +212,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &95633264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95633261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7af39b01acd6046cca2071c130913ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LockedDoor
+  requiredFlag: SafeUnlocked
+  doorId: SafeDoor
+  unlockRadius: 1.5
+  autoUnlockOnFlag: 1
+  blocker: {fileID: 866728002}
+  unlockedSprite: {fileID: 8291911317030275723, guid: 2969b33f58cbc43248b1c7c0c47416cc, type: 3}
+  doorRenderer: {fileID: 95633262}
+  onUnlocked:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnlockFailed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &109552091
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -715,6 +741,7 @@ MonoBehaviour:
   tooltip: {fileID: 8411772388911366355}
   popupPanel: {fileID: 0}
   popupId: Keypad
+  closeWithInspectKey: 0
   pauseWhilePopupOpen: 1
   flagId: 
   onlyOnce: 0
@@ -802,7 +829,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.014183164, y: 0.30257577}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -812,7 +839,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.2, y: 0.6}
+  m_Size: {x: 1.5876749, y: 0.3919791}
   m_EdgeRadius: 0
 --- !u!1 &971500464
 GameObject:

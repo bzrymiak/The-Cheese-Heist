@@ -16,6 +16,7 @@ public class InspectableItem : MonoBehaviour
     [Tooltip("A UI panel to show when inspected. Leave empty if this item only triggers dialogue/events.")]
     [SerializeField] private GameObject popupPanel;
     [SerializeField] private string popupId;
+    [SerializeField] private bool closeWithInspectKey = true;
 
     [Tooltip("Pause the game while the popup is open.")]
     [SerializeField] private bool pauseWhilePopupOpen = true;
@@ -56,11 +57,9 @@ public class InspectableItem : MonoBehaviour
         var kb = Keyboard.current;
         if (kb == null) return;
         
-        // popup is open: I or Escape closes it (checked before the pause guard,
-        // since the popup itself may have paused the game)
         if (popupOpen)
         {
-            if (kb.iKey.wasPressedThisFrame || kb.escapeKey.wasPressedThisFrame)
+            if ((closeWithInspectKey && kb.iKey.wasPressedThisFrame) || kb.escapeKey.wasPressedThisFrame)
                 ClosePopup();
             return;
         }
