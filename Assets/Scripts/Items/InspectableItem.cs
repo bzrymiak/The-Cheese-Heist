@@ -18,6 +18,7 @@ public class InspectableItem : MonoBehaviour
     [SerializeField] private string popupId;
     [SerializeField] private Sprite inspectImage;
     [SerializeField] private bool closeWithInspectKey = true;
+    [SerializeField] private bool showPanel = true;
     
 
     [Tooltip("Pause the game while the popup is open.")]
@@ -99,7 +100,7 @@ public class InspectableItem : MonoBehaviour
         if (!string.IsNullOrEmpty(flagId))
             GameFlags.Set(flagId);
 
-        if (GetPopup() != null)
+        if (showPanel && GetPopup() != null)
             OpenPopup();
 
         onInspected.Invoke();
