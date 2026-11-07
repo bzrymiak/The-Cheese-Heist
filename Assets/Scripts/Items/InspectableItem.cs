@@ -16,7 +16,9 @@ public class InspectableItem : MonoBehaviour
     [Tooltip("A UI panel to show when inspected. Leave empty if this item only triggers dialogue/events.")]
     [SerializeField] private GameObject popupPanel;
     [SerializeField] private string popupId;
+    [SerializeField] private Sprite inspectImage;
     [SerializeField] private bool closeWithInspectKey = true;
+    
 
     [Tooltip("Pause the game while the popup is open.")]
     [SerializeField] private bool pauseWhilePopupOpen = true;
@@ -106,6 +108,10 @@ public class InspectableItem : MonoBehaviour
     void OpenPopup()
     {
         popupOpen = true;
+
+        if (popupPanel.TryGetComponent(out InspectPanelView view))
+            view.SetImage(inspectImage);
+
         popupPanel.SetActive(true);
         PopupRegistry.CloseRequested += ClosePopup;
         if (tooltip != null) tooltip.SetActive(false);
