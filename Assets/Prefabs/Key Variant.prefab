@@ -127,6 +127,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 943769483367873217, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
       insertIndex: -1
       addedObject: {fileID: -5833787593063084304}
+    - targetCorrespondingSourceObject: {fileID: 943769483367873217, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8513764380177385815}
   m_SourcePrefab: {fileID: 100100000, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
 --- !u!1 &7877704441654000676 stripped
 GameObject:
@@ -149,3 +152,15 @@ MonoBehaviour:
   onPickedUp:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &-8513764380177385815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7877704441654000676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dac4c8d910bd4aa9b440a6d84e7c8cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PersistentPickup

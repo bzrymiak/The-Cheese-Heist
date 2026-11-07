@@ -11186,6 +11186,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1260018913209986049, guid: be071d253154d4ac38226e4f32f6b414, type: 3}
+      propertyPath: customId
+      value: wtalkie
+      objectReference: {fileID: 0}
     - target: {fileID: 4012511512544695384, guid: be071d253154d4ac38226e4f32f6b414, type: 3}
       propertyPath: onPickedUp.m_PersistentCalls.m_Calls.Array.size
       value: 1

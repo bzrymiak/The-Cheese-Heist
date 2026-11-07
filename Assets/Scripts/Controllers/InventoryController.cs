@@ -156,6 +156,7 @@ public class InventoryController : MonoBehaviour
 
     public bool AddItem(GameObject itemPrefab)
     {
+        Debug.Log($"AddItem called for '{itemPrefab.name}'\n{System.Environment.StackTrace}");
         // look for empty slot
         foreach(Transform slotTransform in inventoryPanel.transform)
         {

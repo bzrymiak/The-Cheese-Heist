@@ -7,6 +7,7 @@ public class PlayerItemCollector : MonoBehaviour
 
     private InventoryController inventoryController;
 
+
     void Start()
     {
         inventoryController = FindFirstObjectByType<InventoryController>();
@@ -47,13 +48,15 @@ public class PlayerItemCollector : MonoBehaviour
         if (item == null) return;
 
         ItemPickupTrigger trigger = nearest.GetComponent<ItemPickupTrigger>();
-        bool added = inventoryController.AddItem(nearest.gameObject);
+        PersistentPickup persistent = nearest.GetComponent<PersistentPickup>();
 
-        if (added)
-        {
-            if (trigger != null) trigger.Fire();
-            Destroy(nearest.gameObject);
-        }
+        if (!inventoryController.AddItem(nearest.gameObject)) return;
+
+        if (trigger != null) trigger.Fire();
+        if (persistent != null) persistent.MarkCollected();
+
+        nearest.gameObject.SetActive(false); // can't be picked up again this frame
+        Destroy(nearest.gameObject);
     }
 
     // shows the pickup range in the scene view when the player is selected

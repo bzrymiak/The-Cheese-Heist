@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6487531381522562136}
   - component: {fileID: -8939262156696088727}
   - component: {fileID: 2242070463308031705}
+  - component: {fileID: 2488788557752342698}
   m_Layer: 5
   m_Name: Item
   m_TagString: Item
@@ -116,7 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 962b50d4e9d26409f82acf18dfe732c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  ID: 0
+  ID: 1
   title: Item
   description: Desc
   detailedView: {fileID: -1769674637, guid: 7dc5ec0ed046e47438dc18973d3ea281, type: 3}
@@ -216,3 +217,15 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.3828125
+--- !u!114 &2488788557752342698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592394078813074303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dac4c8d910bd4aa9b440a6d84e7c8cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PersistentPickup
