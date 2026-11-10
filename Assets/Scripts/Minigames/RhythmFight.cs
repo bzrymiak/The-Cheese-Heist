@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// the gus fight.
+// the gus fight (and the reggie fight, same thing with hardMode on).
 // up arrow = punch. down arrow = dodge (gus winds up first so you can see it coming)
 // perfect = full effect, too early / too slow = half, miss = nothing (or you eat the whole punch)
 public class RhythmFight : MonoBehaviour
@@ -63,6 +63,22 @@ public class RhythmFight : MonoBehaviour
     [Header("Damage")]
     public float playerHitDamage = 0.2f;   // eating a full punch
 
+    [Header("Who you're fighting")]
+    public string opponentName = "GUS";
+    public string winFlag = GusAftermath.KnockedOutFlag;
+    [Tooltip("Reggie: long hold punches and quick bursts mixed in the whole way, not just at the end")]
+    public bool hardMode = false;
+
+    [Header("Opponent poses (optional)")]
+    public Sprite idleSprite;   // standing
+    public Sprite guardSprite;  // hands up, used when you hit them
+    public Sprite jabSprite;    // right jab, used when they swing at you
+
+    [Header("Combo reward")]
+    [Tooltip("Every this many good hits in a row heals you a bit")]
+    public int comboEvery = 5;
+    public float comboHeal = 0.12f;
+
     [Header("After the fight")]
     public string nextScene = "Kitchen";
     public string nextSpawn = "";
@@ -73,7 +89,7 @@ public class RhythmFight : MonoBehaviour
     readonly List<Note> notes = new List<Note>();
     float startTime;
     bool running, finished;
-    int hits, perfects;
+    int hits, perfects, streak;
     float judgeTimer;
     bool finisher;
     float playerHp = 1f, gusHp = 1f;
@@ -86,6 +102,7 @@ public class RhythmFight : MonoBehaviour
     void Start()
     {
         BuildPattern();
+        if (winFlag == GusAftermath.KnockedOutFlag) GameFlags.Set(Story.FoughtGus);
 
         int punches = notes.FindAll(n => n.dir == Dir.Up).Count;
         punchDamage = 1f / Mathf.Max(1, punches * 0.75f); // need roughly 3/4 of punches perfect to drop him
@@ -93,6 +110,7 @@ public class RhythmFight : MonoBehaviour
         robberHome = robber.anchoredPosition;
         gusHome = gus.anchoredPosition;
         gusImage = gus.GetComponent<Image>();
+        if (idleSprite == null && gusImage != null) idleSprite = gusImage.sprite;
         if (hitInner != null) innerColor = hitInner.color;
         if (gusAlert != null) gusAlert.text = "";
         if (hurtFlash != null) hurtFlash.color = new Color(1, 0, 0, 0);
@@ -122,6 +140,23 @@ public class RhythmFight : MonoBehaviour
             {
                 t += 0.2f;
                 notes.Add(new Note { dir = Dir.Up, time = t });
+            }
+
+            if (hardMode && !dodge && i > 4)
+            {
+                double r = rng.NextDouble();
+                if (r < 0.15)
+                {
+                    // big held punch in the middle of the fight
+                    var last = notes[notes.Count - 1];
+                    last.hold = 0.6f + (float)rng.NextDouble() * 0.3f;
+                    t += last.hold;
+                }
+                else if (r < 0.28 && i > 8)
+                {
+                    // flurry, three quick jabs
+                    for (int k = 0; k < 2; k++) { t += 0.18f; notes.Add(new Note { dir = Dir.Up, time = t }); }
+                }
             }
 
             // starts slow, speeds up as it goes
@@ -268,7 +303,13 @@ public class RhythmFight : MonoBehaviour
             var kb = Keyboard.current;
             bool down = kb != null && (kb.upArrowKey.isPressed || kb.wKey.isPressed);
 
-            if (songTime >= n.time + n.hold) { n.holding = false; finisher = true; Resolve(n, Grade.Perfect, null); finisher = false; }
+            if (songTime >= n.time + n.hold)
+            {
+                n.holding = false;
+                finisher = n == notes[notes.Count - 1]; // only the last one is the knockout punch
+                Resolve(n, Grade.Perfect, finisher ? null : "POWER PUNCH!");
+                finisher = false;
+            }
             else if (!down) { n.holding = false; Resolve(n, Grade.Half, "LET GO TOO SOON!"); }
         }
     }
@@ -285,8 +326,18 @@ public class RhythmFight : MonoBehaviour
         n.judged = true;
         if (n.rect != null) StartCoroutine(ArrowFeedback(n, g != Grade.Miss));
 
+        if (g == Grade.Miss) streak = 0;
+        else streak++;
+
         if (n.dir == Dir.Up) Punch(g, label);
         else Dodge(g, label);
+
+        // combo reward: keep the streak going and you get a bit of health back
+        if (g != Grade.Miss && comboEvery > 0 && streak % comboEvery == 0 && playerHp > 0)
+        {
+            playerHp = Mathf.Min(1f, playerHp + comboHeal);
+            ShowJudge("COMBO x" + streak + "!  +HP", new Color(0.45f, 1f, 0.5f));
+        }
 
         UpdateBars();
         if (playerHp <= 0 || gusHp <= 0) EndFight();
@@ -306,6 +357,7 @@ public class RhythmFight : MonoBehaviour
         gusHp = Mathf.Max(0, gusHp - punchDamage * mult * (perfect ? 1f : 0.5f));
         hits++;
         if (perfect) perfects++;
+        GameAudio.Punch(finisher ? 1f : perfect ? 0.9f : 0.6f);
 
         ShowJudge(finisher ? "KNOCKOUT PUNCH!" : perfect ? "PERFECT!" : label, perfect ? new Color(1f, 0.85f, 0.2f) : Color.white);
         Play(ref robberAnim, robber, Lunge(perfect ? 110f : 70f));
@@ -333,6 +385,7 @@ public class RhythmFight : MonoBehaviour
 
         bool half = g == Grade.Half;
         playerHp = Mathf.Max(0, playerHp - playerHitDamage * (half ? 0.5f : 1f));
+        GameAudio.Punch(half ? 0.5f : 0.9f);
         if (half) hits++;
         ShowJudge(half ? label : (label == "MISSED!" ? "OOF!" : label), new Color(1f, 0.45f, 0.45f));
         Play(ref robberAnim, robber, half ? Graze() : Knockback());
@@ -361,7 +414,11 @@ public class RhythmFight : MonoBehaviour
         who.anchoredPosition = who == robber ? robberHome : gusHome;
         who.localRotation = Quaternion.identity;
         who.localScale = Vector3.one;
-        if (who == gus && gusImage != null) gusImage.color = Color.white;
+        if (who == gus && gusImage != null)
+        {
+            gusImage.color = Color.white;
+            if (idleSprite != null) Pose(idleSprite);
+        }
         if (who == gus && gusAlert != null) gusAlert.text = "";
     }
 
@@ -402,6 +459,7 @@ public class RhythmFight : MonoBehaviour
     {
         yield return new WaitForSeconds(0.06f); // land the punch first
         if (gusImage != null) gusImage.color = new Color(1f, 0.6f, 0.6f);
+        if (guardSprite != null) Pose(guardSprite); // arms up, too late
         float t = 0, dur = 0.3f;
         while (t < dur)
         {
@@ -435,8 +493,21 @@ public class RhythmFight : MonoBehaviour
         // holds the pose until the dodge gets judged
     }
 
+    // swap the opponent's pose. poses aren't all the same width (the jab sticks an arm out),
+    // so keep the height and let the width follow the picture
+    float poseHeight = -1f;
+    void Pose(Sprite sp)
+    {
+        if (gusImage == null || sp == null) return;
+        if (poseHeight < 0) poseHeight = gus.sizeDelta.y;
+        gusImage.sprite = sp;
+        float ratio = sp.rect.width / sp.rect.height;
+        gus.sizeDelta = new Vector2(poseHeight * ratio, poseHeight);
+    }
+
     IEnumerator Swing()
     {
+        if (jabSprite != null) Pose(jabSprite);
         float t = 0, dur = 0.26f;
         while (t < dur)
         {
@@ -586,7 +657,13 @@ public class RhythmFight : MonoBehaviour
             if (n.rect != null && !n.judged) Destroy(n.rect.gameObject);
 
         LastFightWon = gusHp <= 0 || (playerHp > 0 && gusHp < playerHp);
-        if (LastFightWon) GameFlags.Set(GusAftermath.KnockedOutFlag); // kitchen checks this to leave him lying there
+        if (LastFightWon)
+        {
+            GameFlags.Set(winFlag); // kitchen checks this to leave them lying there
+            Story.LastFightScore = notes.Count == 0 ? 1f : hits / (float)notes.Count;
+            if (winFlag == GusAftermath.KnockedOutFlag && Story.LastFightScore < Story.GusScoreNeeded)
+                GameFlags.Set(Story.GusLowScore);
+        }
         LastHits = hits;
         LastTotal = notes.Count;
 
@@ -603,13 +680,19 @@ public class RhythmFight : MonoBehaviour
             return;
         }
 
-        centerText.text = "GUS IS DOWN!\n<size=40>" + hits + "/" + notes.Count + " landed  -  " + perfects + " perfect\n\npress enter</size>";
+        int pct = Mathf.RoundToInt(Story.LastFightScore * 100f);
+        string note = winFlag == GusAftermath.KnockedOutFlag
+            ? (pct >= Story.GusScoreNeeded * 100f ? "clean knockout" : "messy... he might've made some noise")
+            : "";
+        centerText.text = opponentName + " IS DOWN!\n<size=40>" + pct + "% landed  -  " + perfects + " perfect"
+            + (note != "" ? "\n" + note : "") + "\n\npress enter</size>";
     }
 
     IEnumerator LoseAfter(float wait)
     {
         yield return new WaitForSecondsRealtime(wait);
-        GameOver.Show(GameOver.Kind.KnockedOut, SceneManager.GetActiveScene().name);
+        var kind = winFlag == Story.ReggieDown ? GameOver.Kind.Reggie : GameOver.Kind.KnockedOut;
+        GameOver.Show(kind, SceneManager.GetActiveScene().name);
     }
 
     IEnumerator KnockOver(RectTransform who, float angle)

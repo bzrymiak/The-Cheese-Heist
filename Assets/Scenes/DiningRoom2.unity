@@ -7657,8 +7657,9 @@ MonoBehaviour:
   tooltip: {fileID: 1753489799}
   popupPanel: {fileID: 0}
   popupId: Inspect
-  inspectImage: {fileID: -6932160298785977206, guid: 9bcd2c79a8703407aaeadd7fcf6b6832, type: 3}
+  inspectImage: {fileID: -3716110427484800658, guid: a30048f50a402449182323c002e9f26c, type: 3}
   closeWithInspectKey: 1
+  showPanel: 1
   pauseWhilePopupOpen: 1
   flagId: ViewPlaque
   onlyOnce: 0

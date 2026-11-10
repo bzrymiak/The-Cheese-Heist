@@ -7,7 +7,7 @@ using UnityEngine.UI;
 // retry sends you back into whatever you lost, return to menu goes to the main menu.
 public class GameOver : MonoBehaviour
 {
-    public enum Kind { KnockedOut, Lasers }
+    public enum Kind { KnockedOut, Lasers, Reggie, Vent, Jail }
 
     public const string SceneName = "GameOver";
     public const string MenuScene = "Menu";
@@ -28,6 +28,12 @@ public class GameOver : MonoBehaviour
     public GameObject knockedOutArt;
     public GameObject laserArt;
 
+    [Header("Joann's exported frames (same order as Kind), used when there")]
+    public Image frameImage;
+    public Sprite[] frames = new Sprite[5];
+    // her buttons aren't all the same width (the vent one is narrower), in figma pixels
+    static readonly float[] buttonWidths = { 367f, 367f, 367f, 297f, 367f };
+
     [Header("UI")]
     public Text titleBottom;          // second line, "KNOCKED OUT!" / "CAUGHT!"
     public Button retryButton, menuButton;
@@ -40,13 +46,44 @@ public class GameOver : MonoBehaviour
         Time.timeScale = 1f;
         PauseController.SetPause(false);
 
-        if (knockedOutArt != null) knockedOutArt.SetActive(kind == Kind.KnockedOut);
-        if (laserArt != null) laserArt.SetActive(kind == Kind.Lasers);
-        if (titleBottom != null) titleBottom.text = kind == Kind.KnockedOut ? "KNOCKED OUT!" : "CAUGHT!";
+        bool knocked = kind == Kind.KnockedOut || kind == Kind.Reggie;
+        if (knockedOutArt != null) knockedOutArt.SetActive(knocked);
+        if (laserArt != null) laserArt.SetActive(!knocked);
+        if (titleBottom != null) titleBottom.text = knocked ? "KNOCKED OUT!" : "CAUGHT!";
+
+        // the real figma frame for this kind if it's been exported, falls back to the first one
+        if (frameImage != null && frames != null && frames.Length > 0)
+        {
+            int i = (int)kind;
+            var f = i < frames.Length && frames[i] != null ? frames[i] : frames[0];
+            if (f != null)
+            {
+                frameImage.sprite = f;
+                frameImage.gameObject.SetActive(true);
+                FitButtons(i < buttonWidths.Length ? buttonWidths[i] : 367f);
+                if (knockedOutArt != null) knockedOutArt.SetActive(false);
+                if (laserArt != null) laserArt.SetActive(false);
+            }
+        }
 
         retryButton.onClick.AddListener(Retry);
         menuButton.onClick.AddListener(ToMenu);
         Select(0);
+    }
+
+    // line the invisible buttons + glow up with the drawn ones on this frame
+    void FitButtons(float figmaWidth)
+    {
+        const float scale = 1920f / 1004f;
+        float w = figmaWidth * scale;
+        float x = (33f + figmaWidth / 2f) * scale - 960f;
+        foreach (var g in new Graphic[] { retryButton.GetComponent<Image>(), menuButton.GetComponent<Image>(), retryOutline, menuOutline })
+        {
+            if (g == null) continue;
+            var rt = g.rectTransform;
+            rt.sizeDelta = new Vector2(w, rt.sizeDelta.y);
+            rt.anchoredPosition = new Vector2(x, rt.anchoredPosition.y);
+        }
     }
 
     void Update()
@@ -73,11 +110,13 @@ public class GameOver : MonoBehaviour
 
     public void Retry()
     {
+        GameAudio.Click();
         SceneManager.LoadScene(string.IsNullOrEmpty(retryScene) ? MenuScene : retryScene);
     }
 
     public void ToMenu()
     {
+        GameAudio.Click();
         SceneManager.LoadScene(MenuScene);
     }
 }

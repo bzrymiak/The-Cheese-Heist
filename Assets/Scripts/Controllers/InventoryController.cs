@@ -60,6 +60,20 @@ public class InventoryController : MonoBehaviour
         ClearDetails();
     }
 
+    // empties the backpack for a fresh run (start over / back to menu)
+    public void ClearItems()
+    {
+        if (inventoryPanel == null) return;
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            Slot slot = slotTransform.GetComponent<Slot>();
+            if (slot == null || slot.currentItem == null) continue;
+            Destroy(slot.currentItem);
+            slot.currentItem = null;
+        }
+        ClearDetails();
+    }
+
     public List<InventorySaveData> GetInventoryItems()
     {
         List<InventorySaveData> invData = new List<InventorySaveData>();
@@ -166,6 +180,8 @@ public class InventoryController : MonoBehaviour
                 GameObject newItem = Instantiate(itemPrefab, slot.transform);
                 newItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
                 slot.currentItem = newItem;
+                BackpackBob.Play();
+                GameAudio.Pickup();
                 return true;
             }
         }

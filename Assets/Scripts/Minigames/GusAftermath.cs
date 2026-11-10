@@ -22,17 +22,22 @@ public class GusAftermath : MonoBehaviour
         foreach (var npc in Object.FindObjectsByType<NPC>(FindObjectsSortMode.None))
         {
             if (npc.gameObject.name != "Gus") continue;
+            // switch his dialogue off right now, before its Start() kicks off the auto-start timer
+            npc.enabled = false;
+            npc.StopAllCoroutines();
             if (npc.GetComponent<GusAftermath>() == null) npc.gameObject.AddComponent<GusAftermath>();
         }
     }
 
     Transform[] stars;
+    Vector3 baseScale = Vector3.one;
 
     void Start()
     {
+        baseScale = transform.localScale; // reggie gets scaled down to gus's size, keep that
         // no more talking
         var npc = GetComponent<NPC>();
-        if (npc != null) npc.enabled = false;
+        if (npc != null) { npc.enabled = false; npc.StopAllCoroutines(); }
 
         // flat on his back
         transform.rotation = Quaternion.Euler(0, 0, 90f);
@@ -74,7 +79,7 @@ public class GusAftermath : MonoBehaviour
         if (stars == null) return;
 
         // head is at the left end once he's lying down (rotated 90)
-        Vector3 head = transform.position + new Vector3(-0.45f, 0.15f, 0);
+        Vector3 head = transform.position + new Vector3(-0.45f, 0.15f, 0) * baseScale.x;
         for (int i = 0; i < stars.Length; i++)
         {
             float a = Time.time * 3f + i * Mathf.PI * 2f / stars.Length;
@@ -85,7 +90,7 @@ public class GusAftermath : MonoBehaviour
 
         // slow breathing so he doesn't look like a prop
         float b = 1f + Mathf.Sin(Time.time * 2f) * 0.03f;
-        transform.localScale = new Vector3(1f, b, 1f);
+        transform.localScale = new Vector3(baseScale.x, baseScale.y * b, baseScale.z);
     }
 
     void OnDestroy()
