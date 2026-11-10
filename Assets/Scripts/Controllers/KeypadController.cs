@@ -57,12 +57,13 @@ public class KeypadController : MonoBehaviour
         if (kb == null) return;
 
         if (kb.backspaceKey.wasPressedThisFrame) Backspace();
-        if (kb.enterKey.wasPressedThisFrame) Submit();
+        if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) Submit();
     }
 
     public void AddLetter(string letter)
     {
         if (isFlashing || guess.Length >= maxLength) return;
+        GameAudio.Click();
         guess += letter;
         UpdateDisplay();
     }
@@ -89,7 +90,6 @@ public class KeypadController : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(successFlagId)) GameFlags.Set(successFlagId);
             Correct();
-            onCorrect.Invoke();
         }
         else
         {
@@ -121,6 +121,7 @@ public class KeypadController : MonoBehaviour
 
         if (flashPanel == null)
         {
+            if (PopupRegistry.Instance != null) PopupRegistry.Instance.RequestClose();
             return;
         }
 
@@ -141,6 +142,10 @@ public class KeypadController : MonoBehaviour
 
         if (color == incorrectFlashColor) Clear();
         isFlashing = false;
+
+        // right answer: green flash, then the popup closes by itself
+        if (color == correctFlashColor && PopupRegistry.Instance != null)
+            PopupRegistry.Instance.RequestClose();
     }
 
     void UpdateDisplay()

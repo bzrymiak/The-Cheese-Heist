@@ -32,8 +32,14 @@ public class NPC : MonoBehaviour
         SceneManager.sceneLoaded += (scene, mode) => { if (scene.name == "Menu") finished.Clear(); };
     }
 
+    public static void ForgetConversations() => finished.Clear();
+
     string Key => SceneManager.GetActiveScene().name + "/" + (dialogueData != null ? dialogueData.name : name);
     public ChoiceAction[] actions; // function calls
+
+    // lets story code know when a conversation is over (and whether a choice loaded another scene)
+    public event Action<NPC> Finished;
+    public bool LeftScene { get; private set; }
 
 
     void Start()
@@ -184,13 +190,14 @@ public class NPC : MonoBehaviour
         switch (action.type)
         {
             case ChoiceActionType.LoadScene:
+                LeftScene = true;
                 EndDialogue();   
                 SceneManager.LoadScene(action.parameter);
                 break;
 
             case ChoiceActionType.SetFlag:
-                // e.g. GameState.SetFlag(action.parameter, true);
-                // where we can make note of interactions that shift narrative
+                // "AlarmOn" sets a flag, "trust:-1" changes tony's trust. comma separate to do a few
+                Story.Apply(action.parameter);
                 break;
         }
     }
@@ -217,5 +224,7 @@ public class NPC : MonoBehaviour
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
         PauseController.SetPause(false);
+
+        Finished?.Invoke(this);
     }
 }

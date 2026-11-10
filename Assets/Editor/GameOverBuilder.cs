@@ -110,16 +110,20 @@ public static class GameOverBuilder
         var help = G.Txt(root, "Help", "arrow keys + enter, or click", 26, new Color(1, 1, 1, 0.45f), new Vector2(-470, -330), new Vector2(760, 40));
 
         // if joann's exported frames are there, use them as-is and lay invisible buttons over her drawn ones
-        var koPng = AssetDatabase.LoadAssetAtPath<Sprite>(Art + "gameover_knockedout.png");
-        var caughtPng = AssetDatabase.LoadAssetAtPath<Sprite>(Art + "gameover_caught.png");
-        if (koPng != null && caughtPng != null)
+        // order matches GameOver.Kind: knocked out (gus), lasers, reggie, vent, jail
+        string[] files = { "gameover_knockedout.png", "gameover_caught.png", "gameover_reggie.png", "gameover_vent.png", "gameover_jail.png" };
+        var pngs = files.Select(f => AssetDatabase.LoadAssetAtPath<Sprite>(Art + f)).ToArray();
+        Image frameImage = null;
+        if (pngs[0] != null)
         {
-            UseFigmaFrames(root, ko, lz, koPng, caughtPng, t1, t2, help, retry, menu, ref retryOutline, ref menuOutline);
+            frameImage = UseFigmaFrames(root, t1, t2, help, retry, menu, ref retryOutline, ref menuOutline);
             bg.color = new Color32(62, 62, 62, 255);
             bg.sprite = null;
         }
 
         var go = canvasGo.AddComponent<GameOver>();
+        go.frameImage = frameImage;
+        go.frames = pngs;
         go.knockedOutArt = ko.gameObject;
         go.laserArt = lz.gameObject;
         go.titleBottom = t2;
@@ -143,19 +147,16 @@ public static class GameOverBuilder
     }
 
     // figma frame is 1004x639, we fit it to the full width of the 1920 wide canvas and centre it
-    static void UseFigmaFrames(Transform root, RectTransform ko, RectTransform lz, Sprite koPng, Sprite caughtPng,
-        Text t1, Text t2, Text help, Button retry, Button menu, ref Image retryOutline, ref Image menuOutline)
+    static Image UseFigmaFrames(Transform root, Text t1, Text t2, Text help, Button retry, Button menu,
+        ref Image retryOutline, ref Image menuOutline)
     {
         const float scale = 1920f / 1004f;
         Vector2 Frame(float x, float y) => new Vector2(x * scale - 960f, 639f * scale / 2f - y * scale);
 
-        // swap the rebuilt art for the full exported frames
-        foreach (Transform c in ko) c.gameObject.SetActive(false);
-        foreach (Transform c in lz) c.gameObject.SetActive(false);
-        var a = G.Img(ko, "Frame", Color.white, Vector2.zero, new Vector2(1920, 639 * scale));
-        a.sprite = koPng;
-        var b = G.Img(lz, "Frame", Color.white, Vector2.zero, new Vector2(1920, 639 * scale));
-        b.sprite = caughtPng;
+        // one full-width image, the script drops in the right frame for what you lost
+        var frame = G.Img(root, "Frame", Color.white, Vector2.zero, new Vector2(1920, 639 * scale));
+        frame.transform.SetSiblingIndex(1);
+        frame.gameObject.SetActive(false);
 
         // heading + button labels are already in the picture
         t1.gameObject.SetActive(false);
@@ -174,6 +175,7 @@ public static class GameOverBuilder
         menuOutline.transform.SetAsLastSibling();
         retryOutline.raycastTarget = false;
         menuOutline.raycastTarget = false;
+        return frame;
     }
 
     static void Place(Button btn, Image outline, Vector2 pos, Vector2 size)

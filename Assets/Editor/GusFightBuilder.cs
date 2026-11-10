@@ -17,6 +17,28 @@ public static class GusFightBuilder
     [MenuItem("Tools/Cheese Heist/Build Gus Fight Scene")]
     public static void Build()
     {
+        BuildFight(ScenePath, "Gus", "gus", null);
+    }
+
+    // final boss. same fight, reggie's art, all three arrow types and faster
+    [MenuItem("Tools/Cheese Heist/Build Reggie Fight Scene")]
+    public static void BuildReggie()
+    {
+        BuildFight("Assets/Scenes/ReggieFight.unity", "Reggie", "reggie", f =>
+        {
+            f.hardMode = true;
+            f.opponentName = "REGGIE";
+            f.winFlag = Story.ReggieDown;
+            f.nextScene = "Kitchen";
+            f.noteCount = 28;
+            f.gap = 0.55f;
+            f.scrollSpeed = 700f;
+            f.seed = 21;
+        });
+    }
+
+    static void BuildFight(string scenePath, string who, string spriteName, System.Action<RhythmFight> configure)
+    {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
         MakeLightTextures();
@@ -60,7 +82,7 @@ public static class GusFightBuilder
 
         // health bars + FIGHT! box
         var php = Bar(root, "You", new Vector2(-560, 610), new Color32(84, 214, 84, 255), true);
-        var ghp = Bar(root, "Gus", new Vector2(560, 610), new Color32(226, 64, 64, 255), false);
+        var ghp = Bar(root, who, new Vector2(560, 610), new Color32(226, 64, 64, 255), false);
 
         var fightBox = Img(root, "FightBox", new Color32(235, 235, 235, 255), new Vector2(0, 610), new Vector2(330, 110));
         Border(fightBox.gameObject, 6);
@@ -108,7 +130,9 @@ public static class GusFightBuilder
         robber.rectTransform.pivot = new Vector2(0.5f, 0f);
         robber.rectTransform.anchoredPosition = new Vector2(-150, -470);
         var gus = Img(root, "Gus", Color.white, new Vector2(150, -330), new Vector2(196, 256));
-        gus.sprite = FindSprite("gus"); gus.preserveAspect = true;
+        gus.sprite = FindSprite(spriteName);
+        if (gus.sprite == null) { gus.sprite = FindSprite("gus"); gus.color = new Color(0.8f, 0.85f, 1f); } // until reggie's art is in
+        gus.preserveAspect = true;
         gus.rectTransform.pivot = new Vector2(0.5f, 0f);
         gus.rectTransform.anchoredPosition = new Vector2(150, -470);
 
@@ -145,13 +169,18 @@ public static class GusFightBuilder
         fight.arrowsHit = new[] { Load(Art + "arrow_left_hit.png"), Load(Art + "arrow_down_hit.png"), Load(Art + "arrow_up_hit.png"), Load(Art + "arrow_left_hit.png") };
         fight.arrowsOff = new[] { Load(Art + "arrow_left_off.png"), Load(Art + "arrow_down_off.png"), Load(Art + "arrow_up_off.png"), Load(Art + "arrow_left_off.png") };
 
-        EditorSceneManager.SaveScene(scene, ScenePath);
+        // joann's posed frames, if they've been exported next to the character art
+        fight.idleSprite = gus.sprite;
+        fight.guardSprite = FindSpriteQuiet(spriteName + "_guard");
+        fight.jabSprite = FindSpriteQuiet(spriteName + "_jab");
+        configure?.Invoke(fight);
+        EditorSceneManager.SaveScene(scene, scenePath);
 
         var list = EditorBuildSettings.scenes.ToList();
-        if (!list.Any(s => s.path == ScenePath)) list.Add(new EditorBuildSettingsScene(ScenePath, true));
+        if (!list.Any(s => s.path == scenePath)) list.Add(new EditorBuildSettingsScene(scenePath, true));
         EditorBuildSettings.scenes = list.ToArray();
 
-        Debug.Log("gus fight rebuilt, press play");
+        Debug.Log(who + " fight rebuilt, press play");
     }
 
     // health bar like the mockup: dark frame, name on the left, coloured fill
@@ -183,6 +212,17 @@ public static class GusFightBuilder
         var s = AssetDatabase.LoadAssetAtPath<Sprite>(path);
         if (s == null) Debug.LogWarning("missing sprite " + path);
         return s;
+    }
+
+    internal static Sprite FindSpriteQuiet(string name)
+    {
+        foreach (var guid in AssetDatabase.FindAssets("t:Sprite", new[] { "Assets/Sprites/Characters" }))
+        {
+            var path = AssetDatabase.GUIDToAssetPath(guid);
+            if (Path.GetFileNameWithoutExtension(path).ToLower() == name.ToLower())
+                return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+        return null;
     }
 
     internal static Sprite FindSprite(string name)
