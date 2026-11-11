@@ -117,9 +117,21 @@ public class RhythmFight : MonoBehaviour
         judgeText.text = "";
 
         UpdateBars();
+        if (winFlag == GusAftermath.KnockedOutFlag)
+        {
+            // first fight of the game, so explain it before the countdown
+            intro = HowToPlay.Show(stage.root, "FIGHT GUS!", new[] {
+                "PUNCH: press UP when the arrow lands in the ring",
+                "DODGE: press DOWN when Gus winds up a swing",
+                "Hit 5 in a row for a COMBO and heal a little",
+            });
+            return;
+        }
         startTime = Time.time + countdown;
         running = true;
     }
+
+    HowToPlay intro;
 
     void BuildPattern()
     {
@@ -169,6 +181,14 @@ public class RhythmFight : MonoBehaviour
 
     void Update()
     {
+        if (intro != null)
+        {
+            if (!intro.Done) return;
+            Destroy(intro.gameObject);
+            intro = null;
+            startTime = Time.time + countdown;
+            running = true;
+        }
         if (finished)
         {
             var kb = Keyboard.current;
@@ -386,6 +406,7 @@ public class RhythmFight : MonoBehaviour
         bool half = g == Grade.Half;
         playerHp = Mathf.Max(0, playerHp - playerHitDamage * (half ? 0.5f : 1f));
         GameAudio.Punch(half ? 0.5f : 0.9f);
+        GameAudio.Ouch();
         if (half) hits++;
         ShowJudge(half ? label : (label == "MISSED!" ? "OOF!" : label), new Color(1f, 0.45f, 0.45f));
         Play(ref robberAnim, robber, half ? Graze() : Knockback());

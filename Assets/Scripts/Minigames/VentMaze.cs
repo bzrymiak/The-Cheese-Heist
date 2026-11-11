@@ -87,6 +87,17 @@ public class VentMaze : MonoBehaviour
         Place(playerRt, player);
         Place(djangoRt, django);
 
+        intro = HowToPlay.Show(board.root, "ESCAPE THE VENTS", new[] {
+            "Move with the ARROW KEYS or WASD and reach the EXIT",
+            "Stand on a red button and press E to flip the vent gates",
+            "Django is coming for you, don't let him catch you!",
+        });
+    }
+
+    HowToPlay intro;
+
+    void BeginChase()
+    {
         startTime = Time.time;
         djangoTimer = djangoDelay;
         StartCoroutine(Banner());
@@ -183,6 +194,13 @@ public class VentMaze : MonoBehaviour
     void Update()
     {
         if (over) return;
+        if (intro != null)
+        {
+            if (!intro.Done) return;
+            Destroy(intro.gameObject);
+            intro = null;
+            BeginChase();
+        }
         var kb = Keyboard.current;
         if (kb == null) return;
 

@@ -54,7 +54,7 @@ public static class Phase2Builder
     }
 
     // makes the recipe book item (a copy of brooke's item prefab with the book art) and hooks it into StoryContent
-    [MenuItem("Tools/Cheese Heist/Build Recipe Book")]
+    [MenuItem("Tools/Cheese Heist/Build Recipe Book + Story Extras")]
     public static void BuildRecipeBook()
     {
         const string art = "Assets/Sprites/Items/recipe_book.png";
@@ -107,6 +107,46 @@ public static class Phase2Builder
         var tip = pin != null ? pin.transform.Find("tooltip") : null;
         content.pickupTooltip = tip != null ? tip.gameObject : null;
         if (tip == null) Debug.LogWarning("couldn't find the rolling pin's tooltip");
+
+        // joann's clue art
+        foreach (var name in new[] { "painting", "key_on_wall", "trophy_frame", "sticky_poop", "newspaper_reggie" })
+        {
+            var path = "Assets/Sprites/Items/Clues/" + name + ".png";
+            var cimp = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (cimp == null) { Debug.LogWarning("missing " + path); continue; }
+            cimp.textureType = TextureImporterType.Sprite;
+            cimp.spriteImportMode = SpriteImportMode.Single;
+            cimp.spritePixelsPerUnit = 100;
+            cimp.filterMode = FilterMode.Point;
+            cimp.textureCompression = TextureImporterCompression.Uncompressed;
+            cimp.mipmapEnabled = false;
+            cimp.SaveAndReimport();
+        }
+        content.clueKeyWall = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Items/Clues/key_on_wall.png");
+        content.clueSticky = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Items/Clues/sticky_poop.png");
+        content.clueNewspaper = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Items/Clues/newspaper_reggie.png");
+
+        content.pixelFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Fonts/PixelifySans-VariableFont_wght.ttf");
+
+        // fight / maze music and the ouch
+        content.fightMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/fighting.mp3");
+        content.mazeMusic = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/maze_audio.mp3");
+        content.ouch = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/ouch.mp3");
+
+        // portraits and the inspect bubble the story code needs
+        content.tonyRadio = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Characters/Tony/walkietalkie.png");
+        content.inspectTooltip = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/UI/inspectTooltip.png").OfType<Sprite>().FirstOrDefault();
+        const string reggieHead = "Assets/Sprites/Characters/Reggie/reggiehead.png";
+        var rimp = AssetImporter.GetAtPath(reggieHead) as TextureImporter;
+        if (rimp != null)
+        {
+            rimp.textureType = TextureImporterType.Sprite;
+            rimp.spriteImportMode = SpriteImportMode.Single;
+            rimp.filterMode = FilterMode.Point;
+            rimp.textureCompression = TextureImporterCompression.Uncompressed;
+            rimp.SaveAndReimport();
+            content.reggiePortrait = AssetDatabase.LoadAssetAtPath<Sprite>(reggieHead);
+        }
         EditorUtility.SetDirty(content);
         AssetDatabase.SaveAssets();
         Debug.Log("recipe book built");
