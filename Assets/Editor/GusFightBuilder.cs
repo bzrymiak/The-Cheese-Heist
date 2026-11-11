@@ -72,7 +72,30 @@ public static class GusFightBuilder
         var root = stage.transform;
 
         // stage: darker floor strip along the bottom like the mockup
-        Img(root, "Floor", new Color32(28, 28, 28, 255), new Vector2(0, -470), new Vector2(1920, 500));
+        var floor = Img(root, "Floor", new Color32(28, 28, 28, 255), new Vector2(0, -470), new Vector2(1920, 500));
+        if (who == "Reggie")
+        {
+            // joann's coloured floor for the reggie fight, stretched to the canvas width like her frames
+            const string bgPath = Art + "reggie_fight_bg.png";
+            var imp = AssetImporter.GetAtPath(bgPath) as TextureImporter;
+            if (imp != null && imp.textureType != TextureImporterType.Sprite)
+            {
+                imp.textureType = TextureImporterType.Sprite;
+                imp.spriteImportMode = SpriteImportMode.Single;
+                imp.filterMode = FilterMode.Point;
+                imp.textureCompression = TextureImporterCompression.Uncompressed;
+                imp.SaveAndReimport();
+            }
+            var bg = AssetDatabase.LoadAssetAtPath<Sprite>(bgPath);
+            if (bg != null)
+            {
+                float h = 1920f * bg.rect.height / bg.rect.width;
+                floor.sprite = bg;
+                floor.color = Color.white;
+                floor.rectTransform.sizeDelta = new Vector2(1920, h);
+                floor.rectTransform.anchoredPosition = new Vector2(0, -720 + h / 2f);
+            }
+        }
 
         // spotlight cone coming down from the top, and the pool of light on the floor
         var cone = Img(root, "Spotlight", new Color(1, 1, 1, 0.22f), new Vector2(0, -60), new Vector2(1220, 1160));

@@ -11,7 +11,7 @@ public class GameAudio : MonoBehaviour
     AudioSource music, alarm, siren, sfx;
     StoryContent clips;
 
-    static readonly string[] quietScenes = { "Menu", "Ending", "GameOver", "LaserDodge" }; // no alarm/sirens here
+    static readonly string[] quietScenes = { "Menu", "Ending", "GameOver", "LaserDodge", "VentMaze", "ReggieFight" }; // no alarm/sirens here
 
     void Awake()
     {
@@ -21,6 +21,7 @@ public class GameAudio : MonoBehaviour
         alarm = Source(true, 0.25f);
         siren = Source(true, 0.35f);
         sfx = Source(false, 0.8f);
+        ouchSrc = Source(false, 0.9f);
 
         // none of the scenes have an AudioListener on their camera, so the game was deaf.
         // this object never unloads, so it listens for every room (and steps aside if a scene has its own)
@@ -30,6 +31,7 @@ public class GameAudio : MonoBehaviour
     }
 
     AudioListener ears;
+    AudioSource ouchSrc;
     bool checkEars;
 
     AudioSource Source(bool loop, float vol)
@@ -58,6 +60,8 @@ public class GameAudio : MonoBehaviour
         AudioClip want = null;
         if (room == "Menu") want = clips.menuMusic;
         else if (room == "LaserDodge") want = clips.laserMusic;
+        else if (room == "GusFight" || room == "ReggieFight") want = clips.fightMusic;
+        else if (room == "VentMaze") want = clips.mazeMusic;
         Loop(music, want);
 
         bool alarmOn = GameFlags.Has(Story.AlarmOn) && System.Array.IndexOf(quietScenes, room) < 0;
@@ -80,5 +84,17 @@ public class GameAudio : MonoBehaviour
 
     public static void Punch(float vol = 1f) { if (instance != null) Shot(instance.clips.punch, vol); }
     public static void Pickup() { if (instance != null) Shot(instance.clips.pickup); }
+    // the ouch file is a bunch of ouches in a row, the first one is 0.7s to 1.6s in
+    public static void Ouch()
+    {
+        if (instance == null || instance.clips.ouch == null) return;
+        var s = instance.ouchSrc;
+        s.Stop();
+        s.clip = instance.clips.ouch;
+        s.time = 0.7f;
+        s.Play();
+        s.SetScheduledEndTime(AudioSettings.dspTime + 0.9);
+    }
+
     public static void Click() { if (instance != null) Shot(instance.clips.click, 0.7f); }
 }

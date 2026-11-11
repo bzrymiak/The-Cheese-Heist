@@ -18,7 +18,7 @@ MonoBehaviour:
   - AH! REGGIE I CAN EXPLAIN PLEASE DON'T FIRE ME! I WAS SO HUNGRY ALL SHIFT AND
     THE CHEESE SMELLED SO GOOD I COULDN'T RESIST...
   - Wait you're not my boss! Who the hell are you?!
-  - AH!
+  - You wanna fight ME? You don't stand a chance, buddy!
   - A misunderstanding....?
   - ...alright. We'll call it even. I can't risk another strike with Reggie, we're
     already on bad terms.
@@ -39,8 +39,8 @@ MonoBehaviour:
     - It's a misunderstanding...
     nextDialogueIndexes: 0200000003000000
     actions:
-    - type: 1
-      parameter: GusFight
+    - type: 2
+      parameter: GusPickedFight
     - type: 0
       parameter: 
   - dialogueIndex: 3

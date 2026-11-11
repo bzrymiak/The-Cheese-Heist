@@ -16,12 +16,18 @@ MonoBehaviour:
   tonyPortrait: {fileID: 21300000, guid: 3de85220c25744058b13949a28eaddb7, type: 3}
   gusPortrait: {fileID: 21300000, guid: 23544eabaaeda47f7829ce3ad3b6635c, type: 3}
   djangoPortrait: {fileID: 21300000, guid: 00cdb3640705d4d109cebf4e3b89004a, type: 3}
-  reggiePortrait: {fileID: 0}
+  reggiePortrait: {fileID: 21300000, guid: a22e201df6d2b4d02bf0e358ef72d59e, type: 3}
   reggieSprite: {fileID: 21300000, guid: 0bd8cc1f066b44b4aa045436b3f7fbae, type: 3}
   robberSprite: {fileID: 21300000, guid: a2b0972ae8c7d4caea7d97235af17e4b, type: 3}
   tonySprite: {fileID: 21300000, guid: 5c4ce75b75c5e45de9345f3a66a1fe7b, type: 3}
   recipeBook: {fileID: 8217397571533977939, guid: 4a547a8c8faa34c9ab71de4396549464, type: 3}
   deskNoBook: {fileID: 21300000, guid: b23c8ad06d980453094f692bf087fb34, type: 3}
+  tonyRadio: {fileID: 21300000, guid: 53300ddbcdd7842918cf802ec0b99956, type: 3}
+  inspectTooltip: {fileID: 152845073310741158, guid: 04219edcebe324aa193fdd57290284dd, type: 3}
+  clueKeyWall: {fileID: 21300000, guid: afa6b347f123d4bfebbb7057eb99d46b, type: 3}
+  clueSticky: {fileID: 21300000, guid: 5614eba3f00d346af848f34ff89d3a33, type: 3}
+  clueNewspaper: {fileID: 21300000, guid: 4a26a447341f14ee6939800583d73aae, type: 3}
+  pixelFont: {fileID: 12800000, guid: 8f3ffb3c337aa4f22a029c5bdd4e178e, type: 3}
   pickupTooltip: {fileID: 612481111501831708, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}
   menuMusic: {fileID: 8300000, guid: fe90a18b0a88143a59d113e24f88eb38, type: 3}
   laserMusic: {fileID: 8300000, guid: 3b813f3fb0b3c42f0815834dd21e1296, type: 3}
@@ -30,3 +36,6 @@ MonoBehaviour:
   punch: {fileID: 8300000, guid: 0ca05e36ca1be48608c06813134a943a, type: 3}
   pickup: {fileID: 8300000, guid: 25e9d7b40d0e341e3a7726a3d031ad4e, type: 3}
   click: {fileID: 8300000, guid: a85351ed83d1a4cd1b55379331cefc81, type: 3}
+  fightMusic: {fileID: 8300000, guid: e91b17978ddaa43e8a139c6e0a5b65a3, type: 3}
+  mazeMusic: {fileID: 8300000, guid: 4c8be23dab44f4657aa24729b909b7c4, type: 3}
+  ouch: {fileID: 8300000, guid: 01290d85108e44a979aefe9db9c04dee, type: 3}

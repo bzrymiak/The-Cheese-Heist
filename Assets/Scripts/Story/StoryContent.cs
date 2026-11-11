@@ -14,6 +14,12 @@ public class StoryContent : ScriptableObject
     public Sprite tonySprite;
     public GameObject recipeBook; // inventory item for the book on the safe room desk
     public Sprite deskNoBook;      // safe room desk with the book taken off it
+    public Sprite tonyRadio;         // walkie talkie portrait for tony's calls
+    public Sprite inspectTooltip;    // brooke's "I to inspect" bubble
+    public Sprite clueKeyWall;      // key in its nook behind reggie's portrait
+    public Sprite clueSticky;       // fridge note close-up
+    public Sprite clueNewspaper;    // "tony's overthrown by reggie"
+    public Font pixelFont;          // same font the minigame cards use
     public GameObject pickupTooltip; // the same "E to pickup" bubble the other items use
 
     [Header("Audio (Assets/Audio)")]
@@ -24,6 +30,9 @@ public class StoryContent : ScriptableObject
     public AudioClip punch;
     public AudioClip pickup;
     public AudioClip click;
+    public AudioClip fightMusic;  // gus + reggie fights
+    public AudioClip mazeMusic;   // vent maze
+    public AudioClip ouch;        // first ouch in the clip is the one we want
 
     static StoryContent cached;
     public static StoryContent Get()

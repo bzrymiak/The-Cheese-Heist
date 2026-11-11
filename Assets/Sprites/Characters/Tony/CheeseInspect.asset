@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bef253740f42c4ab48dd690d3489007a, type: 3}
   m_Name: CheeseInspect
   m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
-  npcName: Tony
-  npcPortrait: {fileID: 21300000, guid: 53300ddbcdd7842918cf802ec0b99956, type: 3}
+  npcName: You
+  npcPortrait: {fileID: 21300000, guid: a2b0972ae8c7d4caea7d97235af17e4b, type: 3}
   dialogueLines:
-  - Cheese crumbs.... you're close. Just keep going.
+  - Hmm, these look like fresh cheese crumbs. I wonder if someone was down here recently...
   endDialogueLines: 00
   autoStart: 0
   autoStartDelay: 3
