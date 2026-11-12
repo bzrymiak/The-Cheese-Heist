@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// once django hits the alarm, every room pulses red with a spinning siren light in the corner until you're out.
+// once django hits the alarm, every room pulses red until you're out.
 // sits under the dialogue box so conversations still read fine. made in code, nothing to set up in scenes.
 public class AlarmOverlay : MonoBehaviour
 {
@@ -66,8 +66,8 @@ public class AlarmOverlay : MonoBehaviour
         float beat = Mathf.PingPong(Time.unscaledTime * 1.4f, 1f);
         wash.color = new Color(1f, 0f, 0f, Mathf.Lerp(0.04f, 0.2f, beat * beat));
         var edge = new Color(1f, 0.1f, 0.1f, Mathf.Lerp(0.15f, 0.6f, beat));
-        edgeTop.color = edge;
-        edgeBottom.color = edge;
+        // just the red breathing now, no bars, siren or label
+        edgeTop.enabled = edgeBottom.enabled = siren.enabled = label.enabled = false;
 
         siren.rectTransform.localRotation = Quaternion.Euler(0, 0, Time.unscaledTime * -540f);
         siren.color = new Color(1f, 0.15f, 0.15f, 0.8f);
