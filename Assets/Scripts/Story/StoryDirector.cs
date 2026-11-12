@@ -50,6 +50,7 @@ public class StoryDirector : MonoBehaviour
             case "LaserVault": StartCoroutine(LaserVault()); break;
             case "DiningRoom2": StartCoroutine(DiningRoom()); break;
         }
+        HideObjectivesTab();
     }
 
     // ---------------- kitchen ----------------
@@ -106,6 +107,29 @@ public class StoryDirector : MonoBehaviour
             "Oh, and if you're here for Reggie's recipe... good luck.",
             "I tried once. Never found the basement key. He hides it somewhere out front.",
         });
+        yield return WalkOut(gus);
+    }
+
+    // gus heads for the dining room door and leaves, instead of just fading where he stands
+    IEnumerator WalkOut(GameObject gus)
+    {
+        if (gus == null) yield break;
+        Vector3 door = gus.transform.position + new Vector3(4f, 0, 0);
+        foreach (var d in FindObjectsByType<RoomDoor>(FindObjectsInactive.Exclude))
+            if (d.targetScene == "DiningRoom2") { door = d.transform.position; break; }
+        door.z = gus.transform.position.z;
+
+        var sr = gus.GetComponent<SpriteRenderer>();
+        if (sr != null) sr.flipX = door.x < gus.transform.position.x;
+        Vector3 from = gus.transform.position;
+        float dur = Mathf.Clamp(Vector2.Distance(from, door) / 2.5f, 0.6f, 3f);
+        for (float t = 0; t < dur; t += Time.deltaTime)
+        {
+            float k = t / dur;
+            // little walking bob
+            gus.transform.position = Vector3.Lerp(from, door, k) + new Vector3(0, Mathf.Abs(Mathf.Sin(k * dur * 10f)) * 0.06f, 0);
+            yield return null;
+        }
         yield return FadeOut(gus);
     }
 
@@ -321,22 +345,19 @@ public class StoryDirector : MonoBehaviour
         var call = MakeDialogue("Tony", Radio, new[] {
             "Talk to me. Did you run into anybody in there? Any trouble?",
             "...Huh. Must be some fancy safe. Fine, just get out of there.",
-            "...You tripped a laser. Sure you did. Just hurry up.",
             "DOUBLE?! You were supposed to be in and out! I said NO mistakes!",
         });
-        call.endDialogueLines = new[] { false, true, true, true };
+        call.endDialogueLines = new[] { false, true, true };
         call.choices = new[] {
             new DialogueChoice {
                 dialogueIndex = 0,
                 choices = new[] {
                     "Nope! The alarm just went off when I grabbed the recipe.",
-                    "Nobody's here! I just... kinda tripped a laser.",
                     "You SET ME UP! There's a chef AND the co-owner here. Double my pay.",
                 },
-                nextDialogueIndexes = new[] { 1, 2, 3 },
+                nextDialogueIndexes = new[] { 1, 2 },
                 actions = new[] {
                     new ChoiceAction { type = ChoiceActionType.None },
-                    new ChoiceAction { type = ChoiceActionType.SetFlag, parameter = "trust:-1" },
                     new ChoiceAction { type = ChoiceActionType.SetFlag, parameter = "trust:-2" },
                 },
             }
@@ -537,7 +558,7 @@ public class StoryDirector : MonoBehaviour
         nook.sortingOrder = frameR.sortingOrder + 1;
         frameR.sortingOrder += 2; // frame covers the nook until it's taken down
         nook.transform.position = new Vector3(spot.x, spot.y, frameR.transform.position.z + 0.01f);
-        if (nook.sprite != null) nook.transform.localScale = Vector3.one * (frameR.bounds.size.x * 0.8f / nook.sprite.bounds.size.x);
+        if (nook.sprite != null) nook.transform.localScale = Vector3.one * (frameR.bounds.size.x * 0.45f / nook.sprite.bounds.size.x); // small nook so the key reads as a key, not person-sized
 
         bool down = GameFlags.Has("PortraitDown");
         if (down) frame.SetActive(false);
@@ -638,6 +659,7 @@ public class StoryDirector : MonoBehaviour
     {
         yield return null;
         yield return null;
+        PlaceRiddleNote();
         if (GameFlags.Has(Story.AlarmOn)) yield break;
 
         if (!LaserDodge.Passed && !GameFlags.Has("LaserHint"))
@@ -657,6 +679,41 @@ public class StoryDirector : MonoBehaviour
                 "Now... I should go over my clues and figure out this password.",
             });
         }
+    }
+
+    // joann's riddle sticky, stuck on the wall just right of the keypad
+    void PlaceRiddleNote()
+    {
+        var pad = FindObject("CodeScreen");
+        var padR = pad != null ? pad.GetComponent<SpriteRenderer>() : null;
+        if (padR == null || art.clueRiddle == null) return;
+
+        var note = new GameObject("RiddleNote").AddComponent<SpriteRenderer>();
+        SceneManager.MoveGameObjectToScene(note.gameObject, pad.scene);
+        note.sprite = art.clueRiddle;
+        note.sortingLayerID = padR.sortingLayerID;
+        note.sortingOrder = padR.sortingOrder + 1;
+        // about half the keypad's height, like the little note in joann's mockup
+        float h = padR.bounds.size.y * 0.55f;
+        note.transform.localScale = Vector3.one * (h / note.sprite.bounds.size.y);
+        float w = note.sprite.bounds.size.x * note.transform.localScale.x;
+        var b = padR.bounds;
+        float x = b.min.x - w * 0.5f - 0.35f;
+        var btn = FindObject("button");
+        var btnR = btn != null ? btn.GetComponent<SpriteRenderer>() : null;
+        if (btnR != null) x = (btnR.bounds.max.x + b.min.x) * 0.5f; // centred in the gap between the button and the keypad
+        var at = new Vector3(x, b.center.y + b.extents.y * 0.15f, pad.transform.position.z);
+        note.transform.position = at;
+
+        AddInspectAt(at, () => Clue(art.clueRiddle, new string[0]), at.y + h * 0.5f);
+    }
+
+    // the backpack's objectives and instructions tabs were never filled in, so they're just empty pages
+    static void HideObjectivesTab()
+    {
+        foreach (var t in FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            if (t.name == "ObjectiveTab" || t.name == "ObjectivePage" || t.name == "InstructionsTab" || t.name == "InstructionsPage")
+                t.gameObject.SetActive(false);
     }
 
     // ---------------- closet (tony's waiting) ----------------
@@ -893,7 +950,7 @@ public class StoryDirector : MonoBehaviour
     IEnumerator Clue(Sprite art, string[] lines)
     {
         yield return CluePopup.Show(art);
-        yield return Say("You", this.art.playerPortrait, lines);
+        if (lines != null && lines.Length > 0) yield return Say("You", this.art.playerPortrait, lines);
     }
 
     static Vector3 Center(GameObject go)
@@ -1037,6 +1094,26 @@ public class InspectSpot : MonoBehaviour
     Transform player;
     GameObject tip;
 
+    static readonly System.Collections.Generic.List<InspectSpot> spots = new System.Collections.Generic.List<InspectSpot>();
+    void OnEnable() { spots.Add(this); }
+    void OnDisable() { spots.Remove(this); }
+
+    bool Offers(Vector2 from, out float dist)
+    {
+        dist = Vector2.Distance(from, center);
+        return !(!string.IsNullOrEmpty(doneFlag) && GameFlags.Has(doneFlag)) && dist <= radius;
+    }
+
+    // true if some other inspectable thing is nearer to the player than `dist` (only the closest gets the I bubble)
+    public static bool SomethingCloser(Vector2 from, float dist, UnityEngine.Object self)
+    {
+        foreach (var s in spots)
+            if (s != self && s.Offers(from, out float d) && d < dist) return true;
+        foreach (var it in InspectableItem.All)
+            if (it != self && it.Offers(from, out float d) && d < dist) return true;
+        return false;
+    }
+
     void Start()
     {
         var p = GameObject.FindWithTag("Player");
@@ -1057,6 +1134,7 @@ public class InspectSpot : MonoBehaviour
         if (player == null) return;
         if (!string.IsNullOrEmpty(doneFlag) && GameFlags.Has(doneFlag)) { if (tip != null) tip.SetActive(false); return; }
         bool near = Vector2.Distance(player.position, center) <= radius;
+        if (near && SomethingCloser(player.position, Vector2.Distance(player.position, center), this)) near = false;
         if (tip != null) tip.SetActive(near && !PauseController.IsGamePaused);
         if (!near || PauseController.IsGamePaused) return;
         var kb = UnityEngine.InputSystem.Keyboard.current;

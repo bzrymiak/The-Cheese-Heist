@@ -109,7 +109,7 @@ public static class Phase2Builder
         if (tip == null) Debug.LogWarning("couldn't find the rolling pin's tooltip");
 
         // joann's clue art
-        foreach (var name in new[] { "painting", "key_on_wall", "trophy_frame", "sticky_poop", "newspaper_reggie" })
+        foreach (var name in new[] { "painting", "key_on_wall", "trophy_frame", "sticky_poop", "newspaper_reggie", "sticky_riddle" })
         {
             var path = "Assets/Sprites/Items/Clues/" + name + ".png";
             var cimp = AssetImporter.GetAtPath(path) as TextureImporter;
@@ -124,6 +124,7 @@ public static class Phase2Builder
         }
         content.clueKeyWall = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Items/Clues/key_on_wall.png");
         content.clueSticky = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Items/Clues/sticky_poop.png");
+        content.clueRiddle = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Items/Clues/sticky_riddle.png");
         content.clueNewspaper = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Items/Clues/newspaper_reggie.png");
 
         content.pixelFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Fonts/PixelifySans-VariableFont_wght.ttf");

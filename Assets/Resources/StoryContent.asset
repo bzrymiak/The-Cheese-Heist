@@ -26,6 +26,7 @@ MonoBehaviour:
   inspectTooltip: {fileID: 152845073310741158, guid: 04219edcebe324aa193fdd57290284dd, type: 3}
   clueKeyWall: {fileID: 21300000, guid: afa6b347f123d4bfebbb7057eb99d46b, type: 3}
   clueSticky: {fileID: 21300000, guid: 5614eba3f00d346af848f34ff89d3a33, type: 3}
+  clueRiddle: {fileID: 21300000, guid: 1d10b88b84830417ba5121db16bbcc2e, type: 3}
   clueNewspaper: {fileID: 21300000, guid: 4a26a447341f14ee6939800583d73aae, type: 3}
   pixelFont: {fileID: 12800000, guid: 8f3ffb3c337aa4f22a029c5bdd4e178e, type: 3}
   pickupTooltip: {fileID: 612481111501831708, guid: 15d8858a185f643d390b12ccb246d59c, type: 3}

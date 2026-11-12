@@ -18,6 +18,7 @@ public class StoryContent : ScriptableObject
     public Sprite inspectTooltip;    // brooke's "I to inspect" bubble
     public Sprite clueKeyWall;      // key in its nook behind reggie's portrait
     public Sprite clueSticky;       // fridge note close-up
+    public Sprite clueRiddle;       // "what am I?" note next to the keypad
     public Sprite clueNewspaper;    // "tony's overthrown by reggie"
     public Font pixelFont;          // same font the minigame cards use
     public GameObject pickupTooltip; // the same "E to pickup" bubble the other items use

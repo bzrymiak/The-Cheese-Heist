@@ -36,6 +36,17 @@ public class InspectableItem : MonoBehaviour
     public UnityEvent onInspected;
 
     private Transform player;
+
+    // everything you can press I on, so only the closest one offers itself
+    public static readonly System.Collections.Generic.List<InspectableItem> All = new System.Collections.Generic.List<InspectableItem>();
+    void OnEnable() { All.Add(this); }
+    void OnDisable() { All.Remove(this); }
+
+    public bool Offers(Vector2 from, out float dist)
+    {
+        dist = Vector2.Distance(from, transform.position);
+        return enabled && !(onlyOnce && hasInspected) && dist <= inspectRadius;
+    }
     private bool popupOpen;
     private bool hasInspected;
 
@@ -70,6 +81,7 @@ public class InspectableItem : MonoBehaviour
         if (player == null) return;
 
         bool inRange = Vector2.Distance(player.position, transform.position) <= inspectRadius;
+        if (inRange && InspectSpot.SomethingCloser(player.position, Vector2.Distance(player.position, transform.position), this)) inRange = false;
 
         if (tooltip != null)
             tooltip.SetActive(inRange && !PauseController.IsGamePaused && !(onlyOnce && hasInspected));
